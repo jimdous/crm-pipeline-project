@@ -93,6 +93,7 @@ section:first-of-type{padding-top:140px}
 .impact-text{font-size:14px;color:var(--text2);line-height:1.5}
 
 /* DASHBOARD SECTION */
+#dashboard{}
 .dash-filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
 .dash-filters select{background:var(--card);border:1px solid var(--border);color:var(--text2);font-size:12px;padding:7px 12px;border-radius:var(--radius-sm);outline:none;cursor:pointer;font-family:'DM Sans',sans-serif}
 .dash-filters select:focus{border-color:var(--blue)}
@@ -172,13 +173,14 @@ tbody tr:hover td{background:var(--card2)}
 .sql-interp-text{font-size:13px;color:var(--text2);line-height:1.6}
 
 /* ARCHITECTURE */
+#architecture{}
 .arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
 .layer-list{display:flex;flex-direction:column;gap:0}
 .layer{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border2);position:relative}
 .layer:last-child{border-bottom:none}
 .layer-connector{position:absolute;left:16px;top:44px;bottom:-1px;width:1px;background:var(--border);display:none}
 .layer-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
-
+.layer-body{}
 .layer-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
 .layer-desc{font-size:13px;color:var(--text2);line-height:1.5}
 .stack-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -203,6 +205,7 @@ tbody tr:hover td{background:var(--card2)}
 .wf-arrow{color:var(--text3);font-size:16px;padding:0 6px;flex-shrink:0}
 
 /* FUTURE */
+#future{}
 .future-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:32px}
 .future-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;position:relative;overflow:hidden}
 .future-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px}
@@ -246,6 +249,7 @@ footer{background:var(--card2);border-top:1px solid var(--border);padding:40px 6
     <a href="#dashboard">Dashboard</a>
     <a href="#sql-section">SQL</a>
     <a href="#architecture">Stack</a>
+    <a href="#my-role">My Role</a>
     <a href="#case-study">Case Study</a>
     <a href="#future">Roadmap</a>
   </div>
@@ -405,7 +409,7 @@ footer{background:var(--card2);border-top:1px solid var(--border);padding:40px 6
       </div>
       <div class="layer">
         <div class="layer-num" style="background:rgba(139,92,246,.15);color:#8b5cf6">4</div>
-        <div class="layer-body"><div class="layer-title">Dashboard</div><div class="layer-desc">Live HTML/JS dashboard + Power BI / Tableau version. KPI cards, funnel chart, source analysis, agent leaderboard, follow-up alerts.</div></div>
+        <div class="layer-body"><div class="layer-title">Dashboard</div><div class="layer-desc">Live HTML/JS dashboard with interactive charts. Power BI version planned as next phase.</div></div>
       </div>
       <div class="layer">
         <div class="layer-num" style="background:rgba(0,196,204,.15);color:var(--cyan)">5</div>
@@ -417,8 +421,8 @@ footer{background:var(--card2);border-top:1px solid var(--border);padding:40px 6
       <div class="stack-grid">
         <div class="stack-item"><div class="stack-icon" style="background:rgba(26,110,245,.15);color:var(--blue-lt)">🗄</div><div><div class="stack-name">PostgreSQL</div><div class="stack-role">Database layer</div></div></div>
         <div class="stack-item"><div class="stack-icon" style="background:rgba(0,196,140,.15);color:var(--green)">📊</div><div><div class="stack-name">SQL</div><div class="stack-role">Business analysis</div></div></div>
-        <div class="stack-item"><div class="stack-icon" style="background:rgba(245,166,35,.15);color:var(--amber)">📈</div><div><div class="stack-name">Power BI</div><div class="stack-role">BI dashboard</div></div></div>
-        <div class="stack-item"><div class="stack-icon" style="background:rgba(139,92,246,.15);color:#8b5cf6">🎨</div><div><div class="stack-name">Tableau</div><div class="stack-role">Data viz</div></div></div>
+        <div class="stack-item"><div class="stack-icon" style="background:rgba(245,166,35,.15);color:var(--amber)">📈</div><div><div class="stack-name">Power BI</div><div class="stack-role">Planned — next phase</div></div></div>
+        <div class="stack-item"><div class="stack-icon" style="background:rgba(139,92,246,.15);color:#8b5cf6">🎨</div><div><div class="stack-name">Tableau</div><div class="stack-role">Planned — next phase</div></div></div>
         <div class="stack-item"><div class="stack-icon" style="background:rgba(0,196,204,.15);color:var(--cyan)">⚡</div><div><div class="stack-name">HTML / JS</div><div class="stack-role">Live dashboard</div></div></div>
         <div class="stack-item"><div class="stack-icon" style="background:rgba(255,77,77,.15);color:var(--red)">🐙</div><div><div class="stack-name">GitHub</div><div class="stack-role">Version control</div></div></div>
       </div>
@@ -433,6 +437,43 @@ footer{background:var(--card2);border-top:1px solid var(--border);padding:40px 6
         <span class="role-chip">Technical Account Mgmt</span>
         <span class="role-chip">Business Analyst</span>
       </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════ MY ROLE ═══════ -->
+<section id="my-role" style="background:var(--navy)">
+  <div class="fade-up">
+    <div class="section-label">My Role</div>
+    <div class="section-title">Built end to end, solo</div>
+    <div class="section-sub">Every layer of this project — from the dataset to the business write-up — was designed, built, and documented by me.</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:32px" class="fade-up">
+    <div class="card" style="border-left:3px solid var(--blue);border-radius:0 var(--radius) var(--radius) 0">
+      <div style="font-size:11px;font-weight:700;color:var(--blue-lt);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">CRM Workflow Design</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">Designed the full 7-stage lead lifecycle from New Lead to Closed Won/Lost, mirroring how enterprise CRMs like Salesforce structure pipeline management.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--green);border-radius:0 var(--radius) var(--radius) 0">
+      <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Dataset Creation</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">Created 40 realistic fake leads across 14 fields — budgets, sources, stages, agents, property types, and outcomes — designed to produce meaningful analytics.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--amber);border-radius:0 var(--radius) var(--radius) 0">
+      <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">SQL Business Queries</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">Wrote 9 SQL queries each tied to a specific business question — pipeline value, conversion rates, follow-up gaps, agent performance, and weighted forecasting.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--cyan);border-radius:0 var(--radius) var(--radius) 0">
+      <div style="font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Interactive Dashboard</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">Built the full HTML/JS dashboard with live filtering, Chart.js visualizations, KPI cards, funnel charts, follow-up alerts, and agent leaderboard.</div>
+    </div>
+    <div class="card" style="border-left:3px solid #8b5cf6;border-radius:0 var(--radius) var(--radius) 0">
+      <div style="font-size:11px;font-weight:700;color:#8b5cf6;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Business Case Study</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">Wrote the full business explanation — problem statement, solution architecture, user workflow, key metrics, and measurable impact. This is the layer most students skip.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--red);border-radius:0 var(--radius) var(--radius) 0">
+      <div style="font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">GitHub & Deployment</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6">Managed version control with Git, structured the repository professionally, and deployed the live site via GitHub Pages for public access.</div>
     </div>
   </div>
 </section>
