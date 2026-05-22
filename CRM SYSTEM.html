@@ -1,223 +1,569 @@
-
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
-body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
-.dash{padding:1rem 0}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
-.topbar h1{font-size:17px;font-weight:500;display:flex;align-items:center;gap:8px}
-.nav{display:flex;gap:2px;margin-bottom:1.25rem;border-bottom:0.5px solid var(--color-border-tertiary)}
-.nav button{font-size:12px;padding:6px 12px;border:none;background:none;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;margin-bottom:-1px;font-family:var(--font-sans)}
-.nav button.on{color:var(--color-text-primary);font-weight:500;border-bottom:2px solid #185FA5}
-.section{display:none}.section.on{display:block}
-.krow{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1rem}
-.kcard{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
-.klbl{font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
-.kval{font-size:19px;font-weight:500}
-.ksub{font-size:10px;color:var(--color-text-tertiary);margin-top:2px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
-.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px}
-.ch{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
-.brow{display:flex;align-items:center;gap:6px;margin-bottom:6px}
-.blbl{font-size:12px;min-width:105px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bbg{flex:1;height:7px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden}
-.bfill{height:100%;border-radius:4px}
-.bnum{font-size:11px;color:var(--color-text-secondary);min-width:40px;text-align:right}
-.badge{display:inline-block;padding:2px 7px;border-radius:var(--border-radius-md);font-size:11px;font-weight:500}
-.bg{background:#EAF3DE;color:#27500A}.br{background:#FCEBEB;color:#791F1F}
-.ba{background:#FAEEDA;color:#633806}.bb{background:#E6F1FB;color:#0C447C}
-.bgr{background:var(--color-background-secondary);color:var(--color-text-secondary)}
-.sp{display:inline-flex;align-items:center;justify-content:center;width:32px;height:17px;border-radius:9px;font-size:10px;font-weight:500}
-.sh{background:#EAF3DE;color:#27500A}.sm{background:#FAEEDA;color:#633806}.sl{background:#FCEBEB;color:#791F1F}
-.tw{overflow-x:auto}
-table{width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed}
-th{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-align:left;padding:5px 8px;border-bottom:0.5px solid var(--color-border-tertiary);text-transform:uppercase;white-space:nowrap}
-td{padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--color-background-secondary)}
-.frow{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.flbl{font-size:12px;min-width:120px}
-.fbg{flex:1;height:20px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
-.ffill{height:100%;display:flex;align-items:center;padding-left:6px;font-size:11px;font-weight:500;color:#fff;border-radius:3px}
-.fpct{font-size:11px;color:var(--color-text-secondary);min-width:36px;text-align:right}
-.qblock{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;margin-bottom:8px;font-family:var(--font-mono);font-size:12px;color:var(--color-text-primary);line-height:1.7;white-space:pre-wrap}
-.qbiz{font-size:12px;color:var(--color-text-secondary);margin-bottom:10px;font-family:var(--font-sans)}
-.qresult{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;margin-bottom:14px;font-size:12px}
-.qlbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-secondary);margin-bottom:6px}
-.arow{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
-.arow:last-child{border-bottom:none}
-.adot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
-.atitle{font-size:13px;font-weight:500}
-.asub{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
-.rep-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
-.rep-row:last-child{border-bottom:none}
-.rname{font-size:13px;font-weight:500}
-.rstats{display:flex;gap:10px;font-size:12px;color:var(--color-text-secondary)}
-.stk-step{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.stk-icon{width:32px;height:32px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.stk-body .t1{font-size:13px;font-weight:500}
-.stk-body .t2{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
-.arrow-right{font-size:11px;color:var(--color-text-tertiary);margin:0 2px}
-.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
-.filters select{font-size:12px;padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
-</style>
-
-<h2 class="sr-only">Full CRM Pipeline System with 5 layers: dashboard, SQL queries, pipeline funnel, agent performance, and tech stack documentation.</h2>
-
-<div class="dash">
-<div class="topbar">
-  <h1><i class="ti ti-building-store" aria-hidden="true" style="font-size:17px;color:var(--color-text-secondary)"></i> Real estate CRM — full system</h1>
-  <div style="display:flex;gap:6px">
-    <button onclick="sendPrompt('Write a 1-page business explanation document for this CRM project I can put on my resume and LinkedIn')" style="font-size:12px">Business doc ↗</button>
-    <button onclick="sendPrompt('Write all the PostgreSQL CREATE TABLE and INSERT statements for this CRM project so I can set it up locally')" style="font-size:12px">Export SQL ↗</button>
-  </div>
-</div>
-
-<div class="nav">
-  <button class="on" onclick="tab('dashboard',this)"><i class="ti ti-layout-dashboard" aria-hidden="true"></i> Dashboard</button>
-  <button onclick="tab('pipeline',this)"><i class="ti ti-filter" aria-hidden="true"></i> Pipeline</button>
-  <button onclick="tab('sql',this)"><i class="ti ti-database" aria-hidden="true"></i> SQL queries</button>
-  <button onclick="tab('agents',this)"><i class="ti ti-users" aria-hidden="true"></i> Agent performance</button>
-  <button onclick="tab('stack',this)"><i class="ti ti-stack-2" aria-hidden="true"></i> Tech stack</button>
-</div>
-
-<div id="s-dashboard" class="section on">
-  <div class="filters">
-    <select id="sf" onchange="render()"><option value="">All sources</option><option>Zillow</option><option>Referral</option><option>Instagram</option><option>Google Ads</option><option>Walk-In</option><option>Facebook Ads</option><option>Realtor.com</option></select>
-    <select id="pf" onchange="render()"><option value="">All properties</option><option>Condo</option><option>House</option><option>Rental</option></select>
-    <select id="af" onchange="render()"><option value="">All agents</option><option>Alex Chen</option><option>Brianna Cole</option><option>Marcus Webb</option><option>Diana Park</option></select>
-  </div>
-  <div class="krow" id="kpis"></div>
-  <div class="g2">
-    <div class="card"><div class="ch">Lead source breakdown</div><div id="src-bars"></div></div>
-    <div class="card"><div class="ch">Conversion rate by source</div><div id="conv-bars"></div></div>
-  </div>
-  <div class="card" style="margin-bottom:10px"><div class="ch">Lead records — sorted by lead score</div>
-    <div class="tw"><table>
-      <thead><tr>
-        <th style="width:110px">Name</th><th style="width:55px">Score</th><th style="width:60px">Budget</th>
-        <th style="width:95px">Stage</th><th style="width:75px">Source</th><th style="width:70px">Agent</th>
-        <th style="width:65px">Property</th><th style="width:65px">Outcome</th>
-      </tr></thead>
-      <tbody id="ltbody"></tbody>
-    </table></div>
-  </div>
-</div>
-
-<div id="s-pipeline" class="section">
-  <div class="g2">
-    <div class="card"><div class="ch">Sales funnel — leads by stage</div><div id="funnel"></div></div>
-    <div class="card">
-      <div class="ch">Follow-up gap alerts</div>
-      <div id="gaps"></div>
-    </div>
-  </div>
-  <div class="card" style="margin-bottom:10px">
-    <div class="ch">Stage-by-stage conversion drop-off</div>
-    <div style="position:relative;height:220px"><canvas id="funnelChart" role="img" aria-label="Bar chart showing lead counts at each pipeline stage from New Lead to Closed Won"></canvas></div>
-  </div>
-  <div class="g3">
-    <div class="kcard"><div class="klbl">Total pipeline value</div><div class="kval" id="pv1">—</div><div class="ksub">open deals only</div></div>
-    <div class="kcard"><div class="klbl">Weighted pipeline</div><div class="kval" id="pv2">—</div><div class="ksub">probability-adjusted</div></div>
-    <div class="kcard"><div class="klbl">Avg days to close</div><div class="kval">34</div><div class="ksub">across won deals</div></div>
-  </div>
-</div>
-
-<div id="s-sql" class="section">
-  <div style="margin-bottom:14px;font-size:13px;color:var(--color-text-secondary)">Each query answers a real business question. This is what Solutions Engineering thinking looks like.</div>
-
-  <div class="ch">Query 1 — total active pipeline value</div>
-  <div class="qbiz">Business question: How much revenue potential is currently in the pipeline?</div>
-  <div class="qblock">SELECT SUM(estimated_deal_value) AS total_pipeline
-FROM leads
-WHERE outcome = 'Open';</div>
-  <div class="qresult"><div class="qlbl">Result</div><span style="font-size:18px;font-weight:500;color:var(--color-text-success)" id="q1r">—</span><span style="font-size:12px;color:var(--color-text-secondary);margin-left:8px">in active pipeline</span></div>
-
-  <div class="ch">Query 2 — best performing lead source</div>
-  <div class="qbiz">Business question: Where should we increase marketing spend?</div>
-  <div class="qblock">SELECT lead_source,
-  COUNT(*) AS total_leads,
-  COUNT(CASE WHEN outcome='Won' THEN 1 END) AS closed_won
-FROM leads
-GROUP BY lead_source
-ORDER BY closed_won DESC;</div>
-  <div class="qresult"><div class="qlbl">Top source</div><div id="q2r" style="font-size:13px"></div></div>
-
-  <div class="ch">Query 3 — conversion rate by lead source</div>
-  <div class="qbiz">Business question: Which channels produce actual customers, not just leads?</div>
-  <div class="qblock">SELECT lead_source,
-  ROUND(COUNT(CASE WHEN outcome='Won' THEN 1 END)
-    * 100.0 / COUNT(*), 1) AS conversion_rate
-FROM leads
-GROUP BY lead_source
-ORDER BY conversion_rate DESC;</div>
-  <div class="qresult"><div class="qlbl">Results</div><div id="q3r" style="font-size:12px"></div></div>
-
-  <div class="ch">Query 4 — follow-ups needed right now</div>
-  <div class="qbiz">Business question: Which leads are at risk of falling through the cracks?</div>
-  <div class="qblock">SELECT first_name, last_name, stage,
-  estimated_deal_value, assigned_agent
-FROM leads
-WHERE follow_up_needed = TRUE
-  AND outcome = 'Open'
-ORDER BY estimated_deal_value DESC;</div>
-  <div class="qresult"><div class="qlbl">Leads needing follow-up</div><span style="font-size:18px;font-weight:500;color:var(--color-text-danger)" id="q4r">—</span></div>
-
-  <div class="ch">Query 5 — agent performance ranking</div>
-  <div class="qbiz">Business question: Who is closing the most revenue?</div>
-  <div class="qblock">SELECT assigned_agent,
-  COUNT(*) AS deals_won,
-  SUM(estimated_deal_value) AS revenue_closed
-FROM leads
-WHERE outcome = 'Won'
-GROUP BY assigned_agent
-ORDER BY revenue_closed DESC;</div>
-  <div class="qresult"><div class="qlbl">Top agent</div><div id="q5r" style="font-size:13px"></div></div>
-</div>
-
-<div id="s-agents" class="section">
-  <div class="krow" id="agent-kpis"></div>
-  <div class="card" style="margin-bottom:10px">
-    <div class="ch">Agent leaderboard</div>
-    <div id="rep-board"></div>
-  </div>
-  <div class="g2">
-    <div class="card">
-      <div class="ch">Revenue closed by agent</div>
-      <div style="position:relative;height:200px"><canvas id="agentChart" role="img" aria-label="Bar chart of revenue closed by each sales agent"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="ch">Deals won by agent</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;font-size:11px" id="pie-legend"></div>
-      <div style="position:relative;height:170px"><canvas id="agentPie" role="img" aria-label="Donut chart of deals won by agent"></canvas></div>
-    </div>
-  </div>
-</div>
-
-<div id="s-stack" class="section">
-  <div class="card" style="margin-bottom:10px">
-    <div class="ch">Project architecture — 5 layers</div>
-    <div id="arch"></div>
-  </div>
-  <div class="g2">
-    <div class="card">
-      <div class="ch">Tech stack</div>
-      <div id="techstack"></div>
-    </div>
-    <div class="card">
-      <div class="ch">Target roles this project speaks to</div>
-      <div id="roles"></div>
-    </div>
-  </div>
-  <div class="card" style="margin-bottom:10px">
-    <div class="ch">How to talk about this project in interviews</div>
-    <div id="interview-tips"></div>
-  </div>
-</div>
-</div>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Pipeline — Jim Ferdous</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --navy: #0a1628;
+  --navy2: #0f2040;
+  --navy3: #162d54;
+  --blue: #1a6ef5;
+  --blue-lt: #3d87ff;
+  --blue-dim: #0d2a5e;
+  --cyan: #00c4cc;
+  --green: #00c48c;
+  --green-dim: #003d2b;
+  --amber: #f5a623;
+  --amber-dim: #3d2800;
+  --red: #ff4d4d;
+  --red-dim: #3d0a0a;
+  --text: #f0f4ff;
+  --text2: #8fa3c8;
+  --text3: #4a6080;
+  --border: #1e3155;
+  --border2: #152540;
+  --card: #0d1e38;
+  --card2: #0a1930;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,22,40,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-logo{font-size:14px;font-weight:600;color:var(--text);letter-spacing:-.2px;display:flex;align-items:center;gap:8px}
+.nav-logo span{color:var(--blue-lt)}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.nav-links{display:flex;gap:4px}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:13px;padding:6px 14px;border-radius:6px;transition:all .2s}
+.nav-links a:hover{color:var(--text);background:var(--border2)}
+.nav-links a.active{color:var(--blue-lt)}
+.nav-cta{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;transition:all .2s;border:none;font-family:'DM Sans',sans-serif}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-lt)}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border);font-family:'DM Sans',sans-serif}
+.btn-outline:hover{color:var(--text);border-color:var(--text3)}
+
+/* SECTIONS */
+section{padding:96px 64px}
+section:first-of-type{padding-top:140px}
+.section-label{font-size:11px;font-weight:600;color:var(--blue-lt);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.section-title{font-size:36px;font-weight:700;color:var(--text);letter-spacing:-.8px;line-height:1.2;margin-bottom:16px}
+.section-sub{font-size:16px;color:var(--text2);line-height:1.7;max-width:600px}
+.divider{border:none;border-top:1px solid var(--border);margin:0}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;padding:0 64px;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border2) 1px,transparent 1px),linear-gradient(90deg,var(--border2) 1px,transparent 1px);background-size:64px 64px;opacity:.4}
+.hero-glow{position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(26,110,245,.15) 0%,transparent 70%);pointer-events:none}
+.hero-content{position:relative;max-width:900px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--blue-dim);border:1px solid rgba(26,110,245,.4);color:var(--blue-lt);font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;margin-bottom:28px}
+.hero-title{font-size:64px;font-weight:700;letter-spacing:-2px;line-height:1.05;margin-bottom:24px;color:var(--text)}
+.hero-title span{color:var(--blue-lt)}
+.hero-sub{font-size:18px;color:var(--text2);line-height:1.7;max-width:580px;margin-bottom:40px;font-weight:300}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:56px}
+.hero-btns .btn{padding:12px 24px;font-size:14px}
+.hero-stats{display:grid;grid-template-columns:repeat(4,auto);gap:40px}
+.stat-val{font-size:28px;font-weight:700;color:var(--text);letter-spacing:-1px}
+.stat-val span{color:var(--blue-lt)}
+.stat-lbl{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* EXEC SUMMARY */
+#summary{background:var(--card2)}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.problem-block{background:var(--red-dim);border:1px solid rgba(255,77,77,.2);border-radius:var(--radius);padding:20px 24px}
+.solution-block{background:var(--green-dim);border:1px solid rgba(0,196,140,.2);border-radius:var(--radius);padding:20px 24px}
+.block-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.block-label.red{color:var(--red)}
+.block-label.green{color:var(--green)}
+.block-body{font-size:14px;color:var(--text2);line-height:1.7}
+.tool-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.chip{background:var(--card);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:500;padding:5px 12px;border-radius:20px;font-family:'DM Mono',monospace}
+.impact-list{margin-top:28px}
+.impact-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border2)}
+.impact-item:last-child{border-bottom:none}
+.impact-check{color:var(--green);font-size:16px;flex-shrink:0;margin-top:1px}
+.impact-text{font-size:14px;color:var(--text2);line-height:1.5}
+
+/* DASHBOARD SECTION */
+.dash-filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.dash-filters select{background:var(--card);border:1px solid var(--border);color:var(--text2);font-size:12px;padding:7px 12px;border-radius:var(--radius-sm);outline:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.dash-filters select:focus{border-color:var(--blue)}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.blue::after{background:var(--blue)}
+.kpi.green::after{background:var(--green)}
+.kpi.cyan::after{background:var(--cyan)}
+.kpi.amber::after{background:var(--amber)}
+.kpi.red::after{background:var(--red)}
+.kpi.purple::after{background:#8b5cf6}
+.kpi-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.kpi-val{font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1}
+.kpi-val.blue{color:var(--blue-lt)}
+.kpi-val.green{color:var(--green)}
+.kpi-val.cyan{color:var(--cyan)}
+.kpi-val.amber{color:var(--amber)}
+.kpi-val.red{color:var(--red)}
+.kpi-val.purple{color:#8b5cf6}
+.kpi-sub{font-size:11px;color:var(--text3);margin-top:5px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px}
+.card-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.mb14{margin-bottom:14px}
+.brow{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.blbl{font-size:13px;color:var(--text);min-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bbg{flex:1;height:6px;background:var(--navy3);border-radius:3px;overflow:hidden}
+.bfill{height:100%;border-radius:3px}
+.bnum{font-size:11px;color:var(--text3);min-width:42px;text-align:right}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--border2);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--card2)}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.bg{background:rgba(0,196,140,.12);color:var(--green)}
+.br{background:rgba(255,77,77,.12);color:var(--red)}
+.ba{background:rgba(245,166,35,.12);color:var(--amber)}
+.bb{background:rgba(26,110,245,.12);color:var(--blue-lt)}
+.bgr{background:var(--navy3);color:var(--text3)}
+.score{display:inline-flex;align-items:center;justify-content:center;width:34px;height:18px;border-radius:9px;font-size:10px;font-weight:700}
+.sh{background:rgba(0,196,140,.15);color:var(--green)}
+.sm{background:rgba(245,166,35,.15);color:var(--amber)}
+.sl{background:rgba(255,77,77,.15);color:var(--red)}
+.funnel-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.funnel-lbl{font-size:13px;color:var(--text);min-width:140px}
+.funnel-bg{flex:1;height:24px;background:var(--navy3);border-radius:5px;overflow:hidden}
+.funnel-fill{height:100%;display:flex;align-items:center;padding-left:9px;font-size:11px;font-weight:700;color:rgba(255,255,255,.9);border-radius:5px}
+.funnel-pct{font-size:11px;color:var(--text3);min-width:36px;text-align:right}
+.alert-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border2)}
+.alert-row:last-child{border-bottom:none}
+.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.alert-name{font-size:13px;font-weight:500}
+.alert-sub{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* SQL SECTION */
+#sql-section{background:var(--card2)}
+.sql-cards{display:flex;flex-direction:column;gap:16px}
+.sql-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.sql-card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.sql-num{width:26px;height:26px;border-radius:50%;background:var(--blue-dim);border:1px solid rgba(26,110,245,.4);color:var(--blue-lt);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sql-q-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.sql-biz{font-size:12px;color:var(--text3);font-style:italic}
+.sql-result-badge{font-size:12px;font-weight:600;padding:5px 12px;border-radius:6px;white-space:nowrap;flex-shrink:0}
+.sql-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.sql-code{padding:16px 20px;border-right:1px solid var(--border)}
+.sql-interp{padding:16px 20px;background:var(--card2)}
+.sql-pre{font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;color:var(--text2);white-space:pre;overflow-x:auto}
+.kw{color:#79b8ff;font-weight:500}
+.fn{color:#b392f0}
+.str{color:#85e89d}
+.cm{color:var(--text3);font-style:italic}
+.sql-interp-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px}
+.sql-interp-text{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* ARCHITECTURE */
+.arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.layer-list{display:flex;flex-direction:column;gap:0}
+.layer{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--border2);position:relative}
+.layer:last-child{border-bottom:none}
+.layer-connector{position:absolute;left:16px;top:44px;bottom:-1px;width:1px;background:var(--border);display:none}
+.layer-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+
+.layer-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.layer-desc{font-size:13px;color:var(--text2);line-height:1.5}
+.stack-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stack-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:10px}
+.stack-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.stack-name{font-size:13px;font-weight:600;color:var(--text)}
+.stack-role{font-size:11px;color:var(--text3)}
+.role-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.role-chip{background:var(--blue-dim);border:1px solid rgba(26,110,245,.3);color:var(--blue-lt);font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px}
+
+/* CASE STUDY */
+#case-study{background:var(--card2)}
+.case-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:32px}
+.case-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px}
+.case-card-icon{font-size:20px;margin-bottom:10px}
+.case-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px}
+.case-card-body{font-size:13px;color:var(--text2);line-height:1.6}
+.workflow{display:flex;align-items:center;gap:0;margin:32px 0;flex-wrap:wrap}
+.wf-step{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 16px;text-align:center;flex:1;min-width:100px}
+.wf-step-num{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.wf-step-name{font-size:12px;font-weight:600;color:var(--text)}
+.wf-arrow{color:var(--text3);font-size:16px;padding:0 6px;flex-shrink:0}
+
+/* FUTURE */
+.future-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:32px}
+.future-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;position:relative;overflow:hidden}
+.future-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px}
+.future-card.p1::before{background:var(--blue)}
+.future-card.p2::before{background:var(--green)}
+.future-card.p3::before{background:var(--amber)}
+.future-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.future-tag.p1{color:var(--blue-lt)}
+.future-tag.p2{color:var(--green)}
+.future-tag.p3{color:var(--amber)}
+.future-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px}
+.future-body{font-size:13px;color:var(--text2);line-height:1.5}
+
+/* FOOTER */
+footer{background:var(--card2);border-top:1px solid var(--border);padding:40px 64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.footer-left{font-size:13px;color:var(--text3)}
+.footer-left strong{color:var(--text2)}
+.footer-links{display:flex;gap:16px}
+.footer-links a{color:var(--text3);text-decoration:none;font-size:13px;transition:color .2s}
+.footer-links a:hover{color:var(--blue-lt)}
+
+/* SCROLL ANIMATIONS */
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.fade-up.visible{opacity:1;transform:none}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--navy)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-dot"></div>
+    CRM Pipeline &nbsp;<span>/ Jim Ferdous</span>
+  </div>
+  <div class="nav-links">
+    <a href="#summary">Overview</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#sql-section">SQL</a>
+    <a href="#architecture">Stack</a>
+    <a href="#case-study">Case Study</a>
+    <a href="#future">Roadmap</a>
+  </div>
+  <div class="nav-cta">
+    <a href="https://github.com/jimdous/crm-pipeline-project" target="_blank" class="btn btn-outline">GitHub ↗</a>
+    <a href="#dashboard" class="btn btn-primary">View Live Dashboard</a>
+  </div>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content fade-up">
+    <div class="hero-badge">
+      <div class="nav-dot"></div>
+      Portfolio Project · Solutions Engineering · CRM / RevOps
+    </div>
+    <h1 class="hero-title">Real Estate<br><span>CRM Pipeline</span><br>Dashboard</h1>
+    <p class="hero-sub">A CRM-style sales pipeline system for tracking leads, follow-ups, conversion rates, and agent performance — built to demonstrate SaaS business workflow thinking.</p>
+    <div class="hero-btns">
+      <a href="#dashboard" class="btn btn-primary">View Live Dashboard</a>
+      <a href="#sql-section" class="btn btn-outline">View SQL Queries</a>
+      <a href="#case-study" class="btn btn-outline">Read Case Study</a>
+      <a href="https://github.com/jimdous/crm-pipeline-project" target="_blank" class="btn btn-outline">GitHub ↗</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-val">40</div><div class="stat-lbl">Lead records</div></div>
+      <div><div class="stat-val">9</div><div class="stat-lbl">SQL queries</div></div>
+      <div><div class="stat-val">7</div><div class="stat-lbl">Pipeline stages</div></div>
+      <div><div class="stat-val"><span>$</span>5.7M</div><div class="stat-lbl">Total pipeline value</div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════ EXECUTIVE SUMMARY ═══════ -->
+<section id="summary">
+  <div class="fade-up">
+    <div class="section-label">Executive Summary</div>
+    <div class="section-title">What this project solves</div>
+    <div class="section-sub">Real estate sales teams lose revenue when leads aren't tracked consistently. This system simulates the CRM workflow that fixes it.</div>
+  </div>
+  <div class="summary-grid" style="margin-top:40px">
+    <div class="fade-up">
+      <div class="problem-block">
+        <div class="block-label red">The Business Problem</div>
+        <div class="block-body">Real estate brokerages lose deals when leads fall through the cracks — no consistent follow-up tracking, no visibility into pipeline health, no way to measure which marketing channels actually convert. Teams operate reactively instead of systematically.</div>
+      </div>
+      <div class="solution-block" style="margin-top:14px">
+        <div class="block-label green">The Solution</div>
+        <div class="block-body">A CRM pipeline system that centralizes lead tracking across 7 stages, measures source-level conversion rates, flags follow-up gaps before deals go cold, and gives management a real-time view of agent performance and pipeline value.</div>
+      </div>
+      <div class="tool-chips">
+        <span class="chip">PostgreSQL</span>
+        <span class="chip">SQL</span>
+        <span class="chip">HTML/JS</span>
+        <span class="chip">Power BI</span>
+        <span class="chip">Tableau</span>
+        <span class="chip">Excel/CSV</span>
+        <span class="chip">GitHub</span>
+      </div>
+    </div>
+    <div class="fade-up">
+      <div style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px">Business Impact</div>
+      <div class="impact-list">
+        <div class="impact-item"><div class="impact-check">✓</div><div class="impact-text">Surfaces follow-up gaps before high-value leads go cold</div></div>
+        <div class="impact-item"><div class="impact-check">✓</div><div class="impact-text">Identifies highest-converting lead sources to optimize marketing spend</div></div>
+        <div class="impact-item"><div class="impact-check">✓</div><div class="impact-text">Tracks pipeline value at every stage with probability-weighted forecasting</div></div>
+        <div class="impact-item"><div class="impact-check">✓</div><div class="impact-text">Ranks agent performance by revenue closed and close rate</div></div>
+        <div class="impact-item"><div class="impact-check">✓</div><div class="impact-text">Demonstrates end-to-end customer lifecycle understanding</div></div>
+        <div class="impact-item"><div class="impact-check">✓</div><div class="impact-text">Mirrors how enterprise CRMs like Salesforce and HubSpot are structured</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════ DASHBOARD ═══════ -->
+<section id="dashboard">
+  <div class="fade-up">
+    <div class="section-label">Live Dashboard</div>
+    <div class="section-title">Pipeline analytics</div>
+    <div class="section-sub">Filter by source, property type, or agent. All metrics recalculate in real time.</div>
+  </div>
+  <div style="margin-top:32px">
+    <div class="dash-filters fade-up">
+      <select id="sf" onchange="render()"><option value="">All Sources</option><option>Zillow</option><option>Referral</option><option>Instagram</option><option>Google Ads</option><option>Walk-In</option><option>Facebook Ads</option><option>Realtor.com</option></select>
+      <select id="pf" onchange="render()"><option value="">All Properties</option><option>Condo</option><option>House</option><option>Rental</option></select>
+      <select id="af" onchange="render()"><option value="">All Agents</option><option>Alex Chen</option><option>Brianna Cole</option><option>Marcus Webb</option><option>Diana Park</option></select>
+    </div>
+    <div class="kpi-grid fade-up" id="kpis"></div>
+    <div class="g2 fade-up">
+      <div class="card"><div class="card-title">Lead Source Volume</div><div id="src-bars"></div></div>
+      <div class="card"><div class="card-title">Conversion Rate by Source</div><div id="conv-bars"></div></div>
+    </div>
+    <div class="g2 fade-up mb14">
+      <div class="card"><div class="card-title">Sales Funnel by Stage</div><div id="funnel"></div></div>
+      <div class="card"><div class="card-title">Follow-Up Alerts</div><div id="gaps"></div></div>
+    </div>
+    <div class="card fade-up mb14">
+      <div class="card-title">Stage Conversion Chart</div>
+      <div style="position:relative;height:220px"><canvas id="funnelChart"></canvas></div>
+    </div>
+    <div class="card fade-up mb14">
+      <div class="card-title">Agent Performance</div>
+      <div id="agent-board"></div>
+    </div>
+    <div class="card fade-up">
+      <div class="card-title">All Leads — Sorted by Lead Score</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:130px">Name</th><th style="width:52px">Score</th><th style="width:90px">Budget</th><th style="width:140px">Stage</th><th style="width:100px">Source</th><th style="width:90px">Agent</th><th style="width:75px">Property</th><th style="width:70px">Outcome</th></tr></thead>
+          <tbody id="ltbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════ SQL ═══════ -->
+<section id="sql-section">
+  <div class="fade-up">
+    <div class="section-label">SQL Business Logic</div>
+    <div class="section-title">Every query answers a business question</div>
+    <div class="section-sub">This is what Solutions Engineering thinking looks like — not random queries, but data analysis tied directly to business decisions.</div>
+  </div>
+  <div class="sql-cards" style="margin-top:40px" id="sql-cards"></div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════ ARCHITECTURE ═══════ -->
+<section id="architecture">
+  <div class="fade-up">
+    <div class="section-label">Architecture</div>
+    <div class="section-title">5-layer project structure</div>
+    <div class="section-sub">Most student projects have 1 layer. This project has 5 — each one deliberately chosen to mirror enterprise CRM systems.</div>
+  </div>
+  <div class="arch-grid" style="margin-top:40px">
+    <div class="layer-list fade-up">
+      <div class="layer">
+        <div class="layer-num" style="background:rgba(26,110,245,.15);color:var(--blue-lt)">1</div>
+        <div class="layer-body"><div class="layer-title">Dataset</div><div class="layer-desc">40 realistic fake leads with 14 fields — budget, source, stage, property type, outcome, assigned agent, follow-up flag, deal value.</div></div>
+      </div>
+      <div class="layer">
+        <div class="layer-num" style="background:rgba(0,196,140,.15);color:var(--green)">2</div>
+        <div class="layer-body"><div class="layer-title">Database</div><div class="layer-desc">PostgreSQL with proper schema design — SERIAL primary keys, VARCHAR, NUMERIC, BOOLEAN, DATE types. Runs in pgAdmin locally.</div></div>
+      </div>
+      <div class="layer">
+        <div class="layer-num" style="background:rgba(245,166,35,.15);color:var(--amber)">3</div>
+        <div class="layer-body"><div class="layer-title">SQL Analysis</div><div class="layer-desc">9 business queries covering pipeline value, source performance, conversion rates, follow-up alerts, and agent rankings.</div></div>
+      </div>
+      <div class="layer">
+        <div class="layer-num" style="background:rgba(139,92,246,.15);color:#8b5cf6">4</div>
+        <div class="layer-body"><div class="layer-title">Dashboard</div><div class="layer-desc">Live HTML/JS dashboard + Power BI / Tableau version. KPI cards, funnel chart, source analysis, agent leaderboard, follow-up alerts.</div></div>
+      </div>
+      <div class="layer">
+        <div class="layer-num" style="background:rgba(0,196,204,.15);color:var(--cyan)">5</div>
+        <div class="layer-body"><div class="layer-title">Business Case Study</div><div class="layer-desc">Written explanation of the business problem, solution architecture, user workflow, and measurable impact. What most students never do.</div></div>
+      </div>
+    </div>
+    <div class="fade-up">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px">Tech Stack</div>
+      <div class="stack-grid">
+        <div class="stack-item"><div class="stack-icon" style="background:rgba(26,110,245,.15);color:var(--blue-lt)">🗄</div><div><div class="stack-name">PostgreSQL</div><div class="stack-role">Database layer</div></div></div>
+        <div class="stack-item"><div class="stack-icon" style="background:rgba(0,196,140,.15);color:var(--green)">📊</div><div><div class="stack-name">SQL</div><div class="stack-role">Business analysis</div></div></div>
+        <div class="stack-item"><div class="stack-icon" style="background:rgba(245,166,35,.15);color:var(--amber)">📈</div><div><div class="stack-name">Power BI</div><div class="stack-role">BI dashboard</div></div></div>
+        <div class="stack-item"><div class="stack-icon" style="background:rgba(139,92,246,.15);color:#8b5cf6">🎨</div><div><div class="stack-name">Tableau</div><div class="stack-role">Data viz</div></div></div>
+        <div class="stack-item"><div class="stack-icon" style="background:rgba(0,196,204,.15);color:var(--cyan)">⚡</div><div><div class="stack-name">HTML / JS</div><div class="stack-role">Live dashboard</div></div></div>
+        <div class="stack-item"><div class="stack-icon" style="background:rgba(255,77,77,.15);color:var(--red)">🐙</div><div><div class="stack-name">GitHub</div><div class="stack-role">Version control</div></div></div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin:24px 0 12px">Target Roles</div>
+      <div class="role-chips">
+        <span class="role-chip">Solutions Engineering</span>
+        <span class="role-chip">Customer Success</span>
+        <span class="role-chip">RevOps</span>
+        <span class="role-chip">CRM Administrator</span>
+        <span class="role-chip">Technical Consulting</span>
+        <span class="role-chip">SaaS Implementation</span>
+        <span class="role-chip">Technical Account Mgmt</span>
+        <span class="role-chip">Business Analyst</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════ CASE STUDY ═══════ -->
+<section id="case-study">
+  <div class="fade-up">
+    <div class="section-label">Case Study</div>
+    <div class="section-title">From business problem to working system</div>
+    <div class="section-sub">This section explains the thinking behind the project — the kind of explanation that turns a coding exercise into a portfolio differentiator.</div>
+  </div>
+  <div style="margin-top:32px" class="fade-up">
+    <div style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px">User Workflow — Lead Lifecycle</div>
+    <div class="workflow">
+      <div class="wf-step"><div class="wf-step-num">Stage 1</div><div class="wf-step-name">New Lead</div></div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step"><div class="wf-step-num">Stage 2</div><div class="wf-step-name">Contacted</div></div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step"><div class="wf-step-num">Stage 3</div><div class="wf-step-name">Qualified</div></div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step"><div class="wf-step-num">Stage 4</div><div class="wf-step-name">Showing</div></div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step"><div class="wf-step-num">Stage 5</div><div class="wf-step-name">Negotiating</div></div>
+      <div class="wf-arrow">→</div>
+      <div class="wf-step" style="background:rgba(0,196,140,.1);border-color:rgba(0,196,140,.3)"><div class="wf-step-num" style="color:var(--green)">Won</div><div class="wf-step-name" style="color:var(--green)">Closed ✓</div></div>
+    </div>
+  </div>
+  <div class="case-grid fade-up">
+    <div class="case-card">
+      <div class="case-card-icon">🎯</div>
+      <div class="case-card-title">Business Problem</div>
+      <div class="case-card-body">Real estate teams lose deals in the silence between touchpoints. Without a system, agents don't know which leads need follow-up, managers can't see pipeline health, and marketing doesn't know which channels work.</div>
+    </div>
+    <div class="case-card">
+      <div class="case-card-icon">⚙️</div>
+      <div class="case-card-title">Technical Solution</div>
+      <div class="case-card-body">A relational database stores all lead data with structured stage tracking. SQL queries surface business insights — conversion rates, follow-up gaps, agent rankings. Dashboards make the data accessible to non-technical stakeholders.</div>
+    </div>
+    <div class="case-card">
+      <div class="case-card-icon">📊</div>
+      <div class="case-card-title">Key Metrics Tracked</div>
+      <div class="case-card-body">Close rate by source, active pipeline value, probability-weighted forecast, days since last contact, agent revenue, stage conversion drop-off, and monthly lead volume trends.</div>
+    </div>
+    <div class="case-card">
+      <div class="case-card-icon">👤</div>
+      <div class="case-card-title">Who Uses This System</div>
+      <div class="case-card-body">Sales agents track their own leads. Sales managers monitor team pipeline and follow-up compliance. Marketing reviews source performance. Executives see total pipeline and close rate.</div>
+    </div>
+    <div class="case-card">
+      <div class="case-card-icon">🏢</div>
+      <div class="case-card-title">Enterprise Alignment</div>
+      <div class="case-card-body">This mirrors how Salesforce, HubSpot, and enterprise CRMs are structured — relational data, pipeline stages, role-based views, and KPI dashboards. The architecture scales to any industry.</div>
+    </div>
+    <div class="case-card">
+      <div class="case-card-icon">💡</div>
+      <div class="case-card-title">What This Demonstrates</div>
+      <div class="case-card-body">Business workflow thinking, CRM architecture understanding, SQL-to-insight translation, dashboard design, and technical communication — the exact skills Solutions Engineering and RevOps roles require.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════ FUTURE ═══════ -->
+<section id="future">
+  <div class="fade-up">
+    <div class="section-label">Product Roadmap</div>
+    <div class="section-title">How this evolves into production software</div>
+    <div class="section-sub">These upgrades transform the project from a portfolio piece into a deployable SaaS product — each phase adds real enterprise functionality.</div>
+  </div>
+  <div class="future-grid fade-up">
+    <div class="future-card p1">
+      <div class="future-tag p1">Phase 1 — Core</div>
+      <div class="future-title">Live Database Connection</div>
+      <div class="future-body">Connect the dashboard directly to PostgreSQL via a backend API. Data updates in real time instead of being hardcoded. This is the most important next technical step.</div>
+    </div>
+    <div class="future-card p1">
+      <div class="future-tag p1">Phase 1 — Core</div>
+      <div class="future-title">CRUD Operations</div>
+      <div class="future-body">Add/edit/delete leads directly in the UI. Move leads between pipeline stages with drag-and-drop. This turns the dashboard into actual CRM software.</div>
+    </div>
+    <div class="future-card p2">
+      <div class="future-tag p2">Phase 2 — SaaS</div>
+      <div class="future-title">Login & Role-Based Access</div>
+      <div class="future-body">Agents see only their leads. Managers see the full team. Admins control system settings. Role-based access is a core enterprise SaaS pattern.</div>
+    </div>
+    <div class="future-card p2">
+      <div class="future-tag p2">Phase 2 — SaaS</div>
+      <div class="future-title">Automated Follow-Up Alerts</div>
+      <div class="future-body">Email/SMS reminders when leads go 7 days without contact. Escalation when high-value deals stall. Workflow automation is huge for SaaS platforms.</div>
+    </div>
+    <div class="future-card p2">
+      <div class="future-tag p2">Phase 2 — SaaS</div>
+      <div class="future-title">Cloud Deployment</div>
+      <div class="future-body">Deploy to Vercel + Railway so recruiters can open the live product. A live URL is infinitely more powerful than a GitHub repo for portfolio purposes.</div>
+    </div>
+    <div class="future-card p3">
+      <div class="future-tag p3">Phase 3 — Enterprise</div>
+      <div class="future-title">API Integration</div>
+      <div class="future-body">Connect to Zillow API for live property data, HubSpot for CRM sync, or Salesforce for enterprise integration. This becomes true Solutions Engineering territory.</div>
+    </div>
+    <div class="future-card p3">
+      <div class="future-tag p3">Phase 3 — Enterprise</div>
+      <div class="future-title">AI Lead Scoring</div>
+      <div class="future-body">ML model predicts which leads are most likely to close based on source, budget, response time, and stage velocity. Turns business data into predictive intelligence.</div>
+    </div>
+    <div class="future-card p3">
+      <div class="future-tag p3">Phase 3 — Enterprise</div>
+      <div class="future-title">Customer Segmentation</div>
+      <div class="future-body">Cluster leads by property preference, budget range, and behavior patterns. Target high-value segments with tailored follow-up workflows — standard in enterprise CRM.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    Built by <strong>Jim Ferdous</strong> · Real Estate CRM Pipeline · Portfolio Project 2024
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/jimdous/crm-pipeline-project" target="_blank">GitHub ↗</a>
+    <a href="https://linkedin.com" target="_blank">LinkedIn ↗</a>
+    <a href="#dashboard">Live Dashboard</a>
+    <a href="#sql-section">SQL Queries</a>
+  </div>
+</footer>
+
 <script>
 const LEADS=[
   {name:"Maria Santos",src:"Zillow",prop:"Condo",budget:420000,stage:"Closed Won",agent:"Alex Chen",score:92,fu:false,outcome:"Won",val:420000},
@@ -263,14 +609,13 @@ const LEADS=[
 ];
 
 const STAGES=["New Lead","Contacted","Qualified","Showing Scheduled","Negotiating","Closed Won","Closed Lost"];
-const SCOL={"New Lead":"#888780","Contacted":"#378ADD","Qualified":"#639922","Showing Scheduled":"#1D9E75","Negotiating":"#BA7517","Closed Won":"#185FA5","Closed Lost":"#A32D2D"};
+const SCOL={"New Lead":"#4a6080","Contacted":"#1a6ef5","Qualified":"#00c48c","Showing Scheduled":"#00c4cc","Negotiating":"#f5a623","Closed Won":"#8b5cf6","Closed Lost":"#ff4d4d"};
 const PROB={"New Lead":5,"Contacted":15,"Qualified":35,"Showing Scheduled":55,"Negotiating":75,"Closed Won":100,"Closed Lost":0};
-const ACOLORS={"Alex Chen":"#185FA5","Brianna Cole":"#1D9E75","Marcus Webb":"#7F77DD","Diana Park":"#BA7517"};
+const ACOLORS={"Alex Chen":"#1a6ef5","Brianna Cole":"#00c48c","Marcus Webb":"#8b5cf6","Diana Park":"#f5a623"};
 
-let chartFC=null,chartAG=null,chartPIE=null;
-
-function fmtK(n){return"$"+Math.round(n/1000)+"K"}
-function fmtM(n){return n>=1000000?"$"+Math.round(n/100000)/10+"M":fmtK(n)}
+const fmtK=n=>"$"+Math.round(n/1000)+"K";
+const fmtM=n=>n>=1000000?"$"+(Math.round(n/100000)/10)+"M":fmtK(n);
+let chartFC=null;
 
 function getData(){
   const s=document.getElementById("sf").value;
@@ -279,244 +624,206 @@ function getData(){
   return LEADS.filter(l=>(!s||l.src===s)&&(!p||l.prop===p)&&(!a||l.agent===a));
 }
 
-function tab(id,el){
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("on"));
-  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("on"));
-  document.getElementById("s-"+id).classList.add("on");
-  el.classList.add("on");
-  renderAll();
-}
-
-function scorePill(s){
-  let c=s>=70?"sh":s>=45?"sm":"sl";
-  return`<span class="sp ${c}">${s}</span>`;
-}
-function stageBadge(s){
-  if(s==="Closed Won")return`<span class="badge bg">${s}</span>`;
-  if(s==="Closed Lost")return`<span class="badge br">${s}</span>`;
-  if(s==="Negotiating")return`<span class="badge ba">${s}</span>`;
-  if(s==="New Lead")return`<span class="badge bgr">${s}</span>`;
-  return`<span class="badge bb">${s}</span>`;
-}
-function outcomeBadge(o){
-  if(o==="Won")return`<span class="badge bg">${o}</span>`;
-  if(o==="Lost")return`<span class="badge br">${o}</span>`;
-  return`<span style="font-size:11px;color:var(--color-text-secondary)">${o}</span>`;
-}
+function scorePill(s){const c=s>=70?"sh":s>=45?"sm":"sl";return`<span class="score ${c}">${s}</span>`}
+function stageBadge(s){const m={"Closed Won":"bg","Closed Lost":"br","Negotiating":"ba","New Lead":"bgr","Qualified":"bb","Contacted":"bb","Showing Scheduled":"bb"};return`<span class="badge ${m[s]||'bgr'}">${s}</span>`}
+function outBadge(o){const m={"Won":"bg","Lost":"br","Open":"ba"};return`<span class="badge ${m[o]||'bgr'}">${o}</span>`}
 
 function renderKPIs(data){
-  const won=data.filter(l=>l.outcome==="Won");
-  const lost=data.filter(l=>l.outcome==="Lost");
-  const open=data.filter(l=>l.outcome==="Open");
-  const closed=won.length+lost.length;
-  const conv=closed>0?Math.round(won.length/closed*100):0;
-  const pv=open.reduce((a,l)=>a+l.val,0);
-  const rev=won.reduce((a,l)=>a+l.val,0);
-  const avg=won.length>0?Math.round(rev/won.length):0;
+  const won=data.filter(l=>l.outcome==="Won"),lost=data.filter(l=>l.outcome==="Lost"),open=data.filter(l=>l.outcome==="Open");
+  const closed=won.length+lost.length,conv=closed>0?Math.round(won.length/closed*100):0;
+  const pv=open.reduce((a,l)=>a+l.val,0),rev=won.reduce((a,l)=>a+l.val,0),avg=won.length?Math.round(rev/won.length):0;
+  const fu=data.filter(l=>l.fu&&l.outcome==="Open").length;
   document.getElementById("kpis").innerHTML=[
-    {l:"Total leads",v:data.length,s:"in view"},
-    {l:"Closed won",v:won.length,s:conv+"% close rate"},
-    {l:"Active pipeline",v:fmtM(pv),s:open.length+" open deals"},
-    {l:"Revenue closed",v:fmtM(rev),s:won.length+" deals"},
-    {l:"Avg deal size",v:fmtK(avg),s:"across won deals"},
-    {l:"Follow-ups due",v:data.filter(l=>l.fu&&l.outcome==="Open").length,s:"need action today"}
-  ].map(k=>`<div class="kcard"><div class="klbl">${k.l}</div><div class="kval">${k.v}</div><div class="ksub">${k.s}</div></div>`).join("");
+    {l:"Total Leads",v:data.length,s:"in filtered view",c:"blue"},
+    {l:"Closed Won",v:won.length,s:`${conv}% close rate`,c:"green"},
+    {l:"Active Pipeline",v:fmtM(pv),s:`${open.length} open deals`,c:"cyan"},
+    {l:"Revenue Closed",v:fmtM(rev),s:`${won.length} deals won`,c:"purple"},
+    {l:"Avg Deal Size",v:fmtK(avg),s:"across won deals",c:"blue"},
+    {l:"Follow-Ups Due",v:fu,s:"need action today",c:"amber"}
+  ].map(k=>`<div class="kpi ${k.c}"><div class="kpi-lbl">${k.l}</div><div class="kpi-val ${k.c}">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join("");
 }
 
-function renderSrcBars(data){
-  const counts={};
-  data.forEach(l=>{counts[l.src]=(counts[l.src]||0)+1});
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  const max=sorted[0]?.[1]||1;
-  document.getElementById("src-bars").innerHTML=sorted.map(([s,c])=>`
-    <div class="brow"><span class="blbl">${s}</span><div class="bbg"><div class="bfill" style="width:${Math.round(c/max*100)}%;background:#378ADD"></div></div><span class="bnum">${c}</span></div>`).join("");
+function renderBars(id,data,color){
+  const max=Math.max(...data.map(d=>d.v),1);
+  document.getElementById(id).innerHTML=data.map(d=>`<div class="brow"><span class="blbl">${d.l}</span><div class="bbg"><div class="bfill" style="width:${Math.round(d.v/max*100)}%;background:${color}"></div></div><span class="bnum">${d.n}</span></div>`).join("");
 }
 
-function renderConvBars(data){
-  const map={};
-  data.forEach(l=>{
-    if(!map[l.src])map[l.src]={t:0,w:0};
-    map[l.src].t++;
-    if(l.outcome==="Won")map[l.src].w++;
+function renderFunnel(){
+  const counts={};STAGES.forEach(s=>counts[s]=0);LEADS.forEach(l=>counts[l.stage]++);
+  const max=Math.max(...Object.values(counts));
+  document.getElementById("funnel").innerHTML=STAGES.map(s=>`<div class="funnel-row"><span class="funnel-lbl">${s}</span><div class="funnel-bg"><div class="funnel-fill" style="width:${Math.round(counts[s]/max*100)}%;background:${SCOL[s]}">${counts[s]}</div></div><span class="funnel-pct">${Math.round(counts[s]/LEADS.length*100)}%</span></div>`).join("");
+  if(chartFC)chartFC.destroy();
+  chartFC=new Chart(document.getElementById("funnelChart"),{
+    type:"bar",
+    data:{labels:STAGES,datasets:[{data:STAGES.map(s=>counts[s]),backgroundColor:STAGES.map(s=>SCOL[s]),borderRadius:6,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+      x:{ticks:{color:"#8fa3c8",font:{size:11,family:"DM Sans"}},grid:{color:"#1e3155"}},
+      y:{ticks:{color:"#8fa3c8",font:{size:10,family:"DM Sans"}},grid:{color:"#1e3155"}}
+    }}
   });
-  const sorted=Object.entries(map).map(([s,d])=>({s,r:d.t>0?Math.round(d.w/d.t*100):0})).sort((a,b)=>b.r-a.r);
-  document.getElementById("conv-bars").innerHTML=sorted.map(({s,r})=>`
-    <div class="brow"><span class="blbl">${s}</span><div class="bbg"><div class="bfill" style="width:${r}%;background:#1D9E75"></div></div><span class="bnum">${r}%</span></div>`).join("");
 }
 
-function renderLeadTable(data){
-  const sorted=[...data].sort((a,b)=>b.score-a.score);
-  document.getElementById("ltbody").innerHTML=sorted.map(l=>`<tr>
-    <td style="font-weight:500">${l.name}</td>
+function renderGaps(){
+  const ov=LEADS.filter(l=>l.fu&&l.outcome==="Open").sort((a,b)=>b.val-a.val).slice(0,7);
+  document.getElementById("gaps").innerHTML=ov.map(l=>`<div class="alert-row"><div class="alert-dot" style="background:${l.val>=500000?"#ff4d4d":l.val>=350000?"#f5a623":"#4a6080"}"></div><div><div class="alert-name">${l.name}</div><div class="alert-sub">${l.stage} · ${fmtK(l.val)} · ${l.agent}</div></div></div>`).join("");
+}
+
+function renderAgents(){
+  const m={};
+  LEADS.forEach(l=>{if(!m[l.agent])m[l.agent]={t:0,w:0,lo:0,rev:0};m[l.agent].t++;if(l.outcome==="Won"){m[l.agent].w++;m[l.agent].rev+=l.val;}if(l.outcome==="Lost")m[l.agent].lo++;});
+  const sorted=Object.entries(m).sort((a,b)=>b[1].rev-a[1].rev);
+  const medals=["🥇","🥈","🥉",""];
+  document.getElementById("agent-board").innerHTML=sorted.map(([a,d],i)=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border2)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px;min-width:24px">${medals[i]||""}</span>
+        <div style="width:32px;height:32px;border-radius:50%;background:${ACOLORS[a]}22;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${ACOLORS[a]}">${a.split(" ").map(x=>x[0]).join("")}</div>
+        <div><div style="font-size:13px;font-weight:600">${a}</div><div style="font-size:11px;color:var(--text3)">${d.t} leads · ${d.lo} lost</div></div>
+      </div>
+      <div style="display:flex;gap:16px;font-size:12px;color:var(--text2)">
+        <span><strong style="color:${ACOLORS[a]}">${d.w}</strong> won</span>
+        <span style="color:#00c48c">${fmtM(d.rev)}</span>
+        <span>${Math.round(d.w/(d.w+d.lo||1)*100)}% close rate</span>
+      </div>
+    </div>`).join("")+"<div style='height:1px'></div>";
+}
+
+function renderTable(data){
+  document.getElementById("ltbody").innerHTML=[...data].sort((a,b)=>b.score-a.score).map(l=>`<tr>
+    <td style="font-weight:600">${l.name}</td>
     <td>${scorePill(l.score)}</td>
     <td>${fmtK(l.budget)}</td>
     <td>${stageBadge(l.stage)}</td>
     <td>${l.src}</td>
     <td>${l.agent.split(" ")[0]}</td>
     <td>${l.prop}</td>
-    <td>${outcomeBadge(l.outcome)}</td>
+    <td>${outBadge(l.outcome)}</td>
   </tr>`).join("");
 }
 
-function renderFunnel(){
-  const counts={};
-  STAGES.forEach(s=>counts[s]=0);
-  LEADS.forEach(l=>counts[l.stage]++);
-  const maxC=Math.max(...Object.values(counts));
-  document.getElementById("funnel").innerHTML=STAGES.map(s=>`
-    <div class="frow">
-      <span class="flbl">${s}</span>
-      <div class="fbg"><div class="ffill" style="width:${Math.round(counts[s]/maxC*100)}%;background:${SCOL[s]}">${counts[s]}</div></div>
-      <span class="fpct">${Math.round(counts[s]/maxC*100)}%</span>
-    </div>`).join("");
-
-  const pv=LEADS.filter(l=>l.outcome==="Open").reduce((a,l)=>a+l.val,0);
-  const wp=LEADS.filter(l=>l.outcome==="Open").reduce((a,l)=>a+l.val*(PROB[l.stage]/100),0);
-  document.getElementById("pv1").textContent=fmtM(pv);
-  document.getElementById("pv2").textContent=fmtM(Math.round(wp));
-
-  const stageCounts=STAGES.map(s=>counts[s]);
-  if(chartFC){chartFC.destroy();}
-  chartFC=new Chart(document.getElementById("funnelChart"),{
-    type:"bar",
-    data:{labels:STAGES,datasets:[{label:"Leads",data:stageCounts,backgroundColor:STAGES.map(s=>SCOL[s]),borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{autoSkip:false,maxRotation:35,font:{size:10}}},y:{ticks:{font:{size:10}}}}}
-  });
-}
-
-function renderGaps(){
-  const overdue=LEADS.filter(l=>l.fu&&l.outcome==="Open").sort((a,b)=>b.val-a.val).slice(0,6);
-  document.getElementById("gaps").innerHTML=overdue.map(l=>`
-    <div class="arow">
-      <div class="adot" style="background:${l.score<50?"#E24B4A":"#BA7517"}"></div>
-      <div><div class="atitle">${l.name}</div><div class="asub">${l.stage} · ${fmtK(l.val)} · ${l.agent}</div></div>
-    </div>`).join("");
-}
-
 function renderSQL(){
-  const open=LEADS.filter(l=>l.outcome==="Open");
-  const pv=open.reduce((a,l)=>a+l.val,0);
-  document.getElementById("q1r").textContent=fmtM(pv);
-
-  const srcMap={};
-  LEADS.forEach(l=>{if(!srcMap[l.src])srcMap[l.src]={t:0,w:0};srcMap[l.src].t++;if(l.outcome==="Won")srcMap[l.src].w++;});
-  const topSrc=Object.entries(srcMap).sort((a,b)=>b[1].w-a[1].w)[0];
-  document.getElementById("q2r").innerHTML=`<span style="font-weight:500">${topSrc[0]}</span> — ${topSrc[1].w} deals won out of ${topSrc[1].t} leads`;
-
-  const convRows=Object.entries(srcMap).map(([s,d])=>({s,r:d.t>0?Math.round(d.w/d.t*100):0})).sort((a,b)=>b.r-a.r).slice(0,4);
-  document.getElementById("q3r").innerHTML=convRows.map(({s,r})=>`<span style="display:inline-block;margin-right:14px;margin-bottom:4px"><span style="font-weight:500">${s}</span> ${r}%</span>`).join("");
-
-  const fu=LEADS.filter(l=>l.fu&&l.outcome==="Open").length;
-  document.getElementById("q4r").textContent=fu+" leads";
-
-  const agMap={};
-  LEADS.filter(l=>l.outcome==="Won").forEach(l=>{if(!agMap[l.agent])agMap[l.agent]={w:0,v:0};agMap[l.agent].w++;agMap[l.agent].v+=l.val;});
-  const topAg=Object.entries(agMap).sort((a,b)=>b[1].v-a[1].v)[0];
-  document.getElementById("q5r").innerHTML=`<span style="font-weight:500">${topAg[0]}</span> — ${topAg[1].w} deals · ${fmtM(topAg[1].v)} closed`;
-}
-
-function renderAgents(){
-  const agMap={};
-  LEADS.forEach(l=>{
-    if(!agMap[l.agent])agMap[l.agent]={total:0,won:0,open:0,lost:0,rev:0,pipe:0};
-    agMap[l.agent].total++;
-    if(l.outcome==="Won"){agMap[l.agent].won++;agMap[l.agent].rev+=l.val;}
-    else if(l.outcome==="Open"){agMap[l.agent].open++;agMap[l.agent].pipe+=l.val;}
-    else agMap[l.agent].lost++;
-  });
-  const sorted=Object.entries(agMap).sort((a,b)=>b[1].rev-a[1].rev);
-  const maxRev=sorted[0][1].rev;
-
-  document.getElementById("agent-kpis").innerHTML=sorted.map(([a,d])=>`
-    <div class="kcard"><div class="klbl">${a.split(" ")[0]}</div><div class="kval" style="color:${ACOLORS[a]}">${fmtM(d.rev)}</div><div class="ksub">${d.won} won · ${Math.round(d.won/d.total*100)}% rate</div></div>`).join("");
-
-  document.getElementById("rep-board").innerHTML=sorted.map(([a,d],i)=>`
-    <div class="rep-row">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:12px;color:var(--color-text-tertiary);min-width:14px">#${i+1}</span>
-        <div style="width:28px;height:28px;border-radius:50%;background:${ACOLORS[a]}22;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:${ACOLORS[a]}">${a.split(" ").map(x=>x[0]).join("")}</div>
-        <div><div class="rname">${a}</div><div style="font-size:10px;color:var(--color-text-tertiary)">${d.total} leads assigned</div></div>
+  const queries=[
+    {
+      n:1,title:"Total Active Pipeline Value",
+      biz:"How much revenue potential is currently in the pipeline?",
+      code:`<span class="kw">SELECT</span>
+  <span class="fn">SUM</span>(estimated_deal_value) <span class="kw">AS</span> total_pipeline,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> open_deals,
+  <span class="fn">ROUND</span>(<span class="fn">AVG</span>(estimated_deal_value), 0) <span class="kw">AS</span> avg_deal
+<span class="kw">FROM</span> leads
+<span class="kw">WHERE</span> outcome = <span class="str">'Open'</span>;`,
+      result:fmtM(LEADS.filter(l=>l.outcome==="Open").reduce((a,l)=>a+l.val,0)),
+      rcolor:"var(--green)",
+      interp:"This tells sales management exactly how much potential revenue exists right now. A healthy pipeline is 3–4x your quarterly target. If the number drops, it's an early warning to generate more leads."
+    },
+    {
+      n:2,title:"Conversion Rate by Lead Source",
+      biz:"Which marketing channels produce actual customers — not just leads?",
+      code:`<span class="kw">SELECT</span> lead_source,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total_leads,
+  <span class="fn">ROUND</span>(<span class="fn">COUNT</span>(<span class="kw">CASE WHEN</span> outcome=<span class="str">'Won'</span> <span class="kw">THEN</span> 1 <span class="kw">END</span>)
+    * 100.0 / <span class="fn">NULLIF</span>(<span class="fn">COUNT</span>(*),0), 1) <span class="kw">AS</span> conv_rate
+<span class="kw">FROM</span> leads
+<span class="kw">GROUP BY</span> lead_source
+<span class="kw">ORDER BY</span> conv_rate <span class="kw">DESC</span>;`,
+      result:(()=>{const m={};LEADS.forEach(l=>{if(!m[l.src])m[l.src]={t:0,w:0};m[l.src].t++;if(l.outcome==="Won")m[l.src].w++;});return Object.entries(m).sort((a,b)=>(b[1].w/b[1].t)-(a[1].w/a[1].t))[0][0]+" leads best"})(),
+      rcolor:"var(--blue-lt)",
+      interp:"Volume alone is misleading — a source with 20 leads and 0 conversions wastes budget. This query identifies which channels actually close deals, so marketing can double down on what works and cut what doesn't."
+    },
+    {
+      n:3,title:"Follow-Up Gap Report",
+      biz:"Which high-value leads are at risk of going cold right now?",
+      code:`<span class="kw">SELECT</span>
+  first_name || <span class="str">' '</span> || last_name <span class="kw">AS</span> full_name,
+  stage, estimated_deal_value, assigned_agent
+<span class="kw">FROM</span> leads
+<span class="kw">WHERE</span> follow_up_needed = <span class="str">TRUE</span>
+  <span class="kw">AND</span> outcome = <span class="str">'Open'</span>
+<span class="kw">ORDER BY</span> estimated_deal_value <span class="kw">DESC</span>;`,
+      result:LEADS.filter(l=>l.fu&&l.outcome==="Open").length+" leads overdue",
+      rcolor:"var(--amber)",
+      interp:"In sales, deals don't die loudly — they go quiet. This query surfaces the leads that haven't been touched, sorted by deal size so agents prioritize the most valuable relationships first."
+    },
+    {
+      n:4,title:"Agent Performance Leaderboard",
+      biz:"Who is closing the most revenue, and what is their close rate?",
+      code:`<span class="kw">SELECT</span> assigned_agent,
+  <span class="fn">COUNT</span>(<span class="kw">CASE WHEN</span> outcome=<span class="str">'Won'</span> <span class="kw">THEN</span> 1 <span class="kw">END</span>) <span class="kw">AS</span> won,
+  <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span> outcome=<span class="str">'Won'</span>
+    <span class="kw">THEN</span> estimated_deal_value <span class="kw">END</span>) <span class="kw">AS</span> revenue,
+  <span class="fn">ROUND</span>(won * 100.0 /
+    <span class="fn">NULLIF</span>(won + lost, 0), 1) <span class="kw">AS</span> close_rate_pct
+<span class="kw">FROM</span> leads
+<span class="kw">GROUP BY</span> assigned_agent
+<span class="kw">ORDER BY</span> revenue <span class="kw">DESC</span>;`,
+      result:(()=>{const m={};LEADS.filter(l=>l.outcome==="Won").forEach(l=>{if(!m[l.agent])m[l.agent]=0;m[l.agent]+=l.val;});return Object.entries(m).sort((a,b)=>b[1]-a[1])[0][0]+" leads"})(),
+      rcolor:"var(--purple)",
+      interp:"Revenue per agent reveals who is actually driving the business. Close rate reveals who is efficient. A top agent by volume with a low close rate may be cherry-picking leads — this data surfaces that."
+    },
+    {
+      n:5,title:"Probability-Weighted Pipeline Forecast",
+      biz:"Realistically, how much revenue will this pipeline actually close?",
+      code:`<span class="kw">SELECT</span>
+  <span class="fn">SUM</span>(estimated_deal_value) <span class="kw">AS</span> best_case,
+  <span class="fn">SUM</span>(estimated_deal_value *
+    <span class="kw">CASE</span> stage
+      <span class="kw">WHEN</span> <span class="str">'New Lead'</span>          <span class="kw">THEN</span> 0.05
+      <span class="kw">WHEN</span> <span class="str">'Contacted'</span>         <span class="kw">THEN</span> 0.15
+      <span class="kw">WHEN</span> <span class="str">'Qualified'</span>         <span class="kw">THEN</span> 0.35
+      <span class="kw">WHEN</span> <span class="str">'Showing Scheduled'</span>  <span class="kw">THEN</span> 0.55
+      <span class="kw">WHEN</span> <span class="str">'Negotiating'</span>        <span class="kw">THEN</span> 0.75
+    <span class="kw">END</span>) <span class="kw">AS</span> weighted_forecast
+<span class="kw">FROM</span> leads <span class="kw">WHERE</span> outcome = <span class="str">'Open'</span>;`,
+      result:fmtM(Math.round(LEADS.filter(l=>l.outcome==="Open").reduce((a,l)=>a+l.val*({["New Lead"]:0.05,["Contacted"]:0.15,["Qualified"]:0.35,["Showing Scheduled"]:0.55,["Negotiating"]:0.75}[l.stage]||0),0))),
+      rcolor:"var(--cyan)",
+      interp:"Best-case pipeline is always too optimistic. Probability-weighting each deal by stage gives a realistic forecast — this is how enterprise sales teams predict quarterly revenue and set targets."
+    }
+  ];
+  document.getElementById("sql-cards").innerHTML=queries.map(q=>`
+    <div class="sql-card fade-up">
+      <div class="sql-card-header">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div class="sql-num">${q.n}</div>
+          <div><div class="sql-q-title">${q.title}</div><div class="sql-biz">${q.biz}</div></div>
+        </div>
+        <div class="sql-result-badge" style="background:${q.rcolor}22;color:${q.rcolor};border:1px solid ${q.rcolor}44">${q.result}</div>
       </div>
-      <div class="rstats">
-        <span>${d.won} won</span>
-        <span style="color:var(--color-text-success)">${fmtM(d.rev)}</span>
-        <span>${Math.round(d.won/(d.won+d.lost||1)*100)}% close rate</span>
+      <div class="sql-body">
+        <div class="sql-code"><pre class="sql-pre">${q.code}</pre></div>
+        <div class="sql-interp"><div class="sql-interp-label">Business Interpretation</div><div class="sql-interp-text">${q.interp}</div></div>
       </div>
     </div>`).join("");
-
-  if(chartAG){chartAG.destroy();}
-  chartAG=new Chart(document.getElementById("agentChart"),{
-    type:"bar",
-    data:{labels:sorted.map(([a])=>a.split(" ")[0]),datasets:[{label:"Revenue",data:sorted.map(([,d])=>d.rev),backgroundColor:sorted.map(([a])=>ACOLORS[a]),borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10}}},x:{ticks:{font:{size:11}}}}}
-  });
-
-  const pieColors=sorted.map(([a])=>ACOLORS[a]);
-  const pieLbls=sorted.map(([a,d])=>`${a.split(" ")[0]} ${d.won}`);
-  if(chartPIE){chartPIE.destroy();}
-  chartPIE=new Chart(document.getElementById("agentPie"),{
-    type:"doughnut",
-    data:{labels:pieLbls,datasets:[{data:sorted.map(([,d])=>d.won),backgroundColor:pieColors,borderWidth:2,borderColor:"transparent"}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:"60%"}
-  });
-  document.getElementById("pie-legend").innerHTML=sorted.map(([a,d])=>`<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:${ACOLORS[a]};display:inline-block"></span>${a.split(" ")[0]} ${d.won}</span>`).join("");
+  observeAll();
 }
 
-function renderStack(){
-  const layers=[
-    {icon:"ti-database",col:"#E6F1FB",tcol:"#0C447C",l:"Layer 1 — Dataset",d:"40 realistic fake leads with 14 fields each: budget, source, stage, property type, outcome, agent, follow-up flag"},
-    {icon:"ti-server",col:"#EAF3DE",tcol:"#27500A",l:"Layer 2 — Database",d:"PostgreSQL: CREATE DATABASE, CREATE TABLE with proper data types (SERIAL, VARCHAR, NUMERIC, BOOLEAN, DATE)"},
-    {icon:"ti-code",col:"#FAEEDA",tcol:"#633806",l:"Layer 3 — SQL analysis",d:"5 business queries: pipeline value, source ranking, conversion rate, follow-up alerts, agent performance"},
-    {icon:"ti-chart-bar",col:"#EEEDFE",tcol:"#3C3489",l:"Layer 4 — Dashboard",d:"Power BI or Tableau connected to PostgreSQL. KPI cards, funnel chart, source analysis, agent leaderboard"},
-    {icon:"ti-file-text",col:"#E1F5EE",tcol:"#085041",l:"Layer 5 — Business doc",d:"1-2 page write-up: business problem, solution, tech stack, business impact. This is what most students skip."}
-  ];
-  document.getElementById("arch").innerHTML=layers.map(x=>`
-    <div class="stk-step">
-      <div class="stk-icon" style="background:${x.col}"><i class="ti ${x.icon}" aria-hidden="true" style="color:${x.tcol};font-size:16px"></i></div>
-      <div class="stk-body"><div class="t1">${x.l}</div><div class="t2">${x.d}</div></div>
-    </div>`).join("");
-
-  const tech=[
-    {t:"PostgreSQL",d:"Database — store all lead data"},
-    {t:"pgAdmin",d:"GUI to write and test SQL"},
-    {t:"SQL",d:"Query language — business analysis"},
-    {t:"Power BI / Tableau",d:"Dashboard visualization"},
-    {t:"Excel / CSV",d:"Data generation and staging"},
-    {t:"GitHub",d:"Version control + portfolio hosting"},
-    {t:"LinkedIn",d:"Featured section — showcase project"}
-  ];
-  document.getElementById("techstack").innerHTML=tech.map(t=>`
-    <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary)">
-      <span style="font-size:13px;font-weight:500">${t.t}</span>
-      <span style="font-size:12px;color:var(--color-text-secondary)">${t.d}</span>
-    </div>`).join("");
-
-  const roles=["Solutions Engineering","Customer Success","RevOps / Sales Ops","CRM Administrator","Technical Consulting","SaaS Implementation","Technical Account Management","Business Analyst"];
-  document.getElementById("roles").innerHTML=roles.map(r=>`<span class="badge bb" style="margin:3px 3px 3px 0;display:inline-block">${r}</span>`).join("");
-
-  const tips=[
-    {q:"What is this project?",a:"A mini-Salesforce I built to simulate how real estate sales teams track leads, measure conversion, and manage pipeline health — end to end."},
-    {q:"Why did you build it?",a:"Most CRM roles expect you to understand customer lifecycle, pipeline stages, and reporting. I wanted to build something that demonstrated I already think that way."},
-    {q:"What does the SQL do?",a:"Each query answers a business question — where to spend marketing budget, which leads need follow-up today, who the top-performing agent is. The SQL is the business logic layer."},
-    {q:"How does this relate to Solutions Engineering?",a:"SE is about translating business problems into technical solutions. This project does exactly that — starting from a business problem and building a system to solve it."}
-  ];
-  document.getElementById("interview-tips").innerHTML=tips.map(t=>`
-    <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:0.5px solid var(--color-border-tertiary)">
-      <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:3px">Q: ${t.q}</div>
-      <div style="font-size:13px">${t.a}</div>
-    </div>`).join("");
-}
-
-function renderAll(){
+function render(){
   const data=getData();
-  const active=document.querySelector(".section.on").id;
-  if(active==="s-dashboard"){renderKPIs(data);renderSrcBars(data);renderConvBars(data);renderLeadTable(data);}
-  if(active==="s-pipeline"){renderFunnel();renderGaps();}
-  if(active==="s-sql"){renderSQL();}
-  if(active==="s-agents"){renderAgents();}
-  if(active==="s-stack"){renderStack();}
+  renderKPIs(data);
+  const srcMap={},convMap={};
+  data.forEach(l=>{
+    srcMap[l.src]=(srcMap[l.src]||0)+1;
+    if(!convMap[l.src])convMap[l.src]={t:0,w:0};
+    convMap[l.src].t++;if(l.outcome==="Won")convMap[l.src].w++;
+  });
+  renderBars("src-bars",Object.entries(srcMap).sort((a,b)=>b[1]-a[1]).map(([l,v])=>({l,v,n:v+" leads"})),"#1a6ef5");
+  renderBars("conv-bars",Object.entries(convMap).map(([l,d])=>({l,v:d.t?Math.round(d.w/d.t*100):0,n:d.t?Math.round(d.w/d.t*100)+"%":"0%"})).sort((a,b)=>b.v-a.v),"#00c48c");
+  renderFunnel();renderGaps();renderAgents();renderTable(data);
 }
 
-function render(){renderAll();}
-renderAll();
+// Scroll animations
+function observeAll(){
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible")})},{threshold:.1});
+  document.querySelectorAll(".fade-up").forEach(el=>obs.observe(el));
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  render();
+  renderSQL();
+  observeAll();
+  // Stagger hero
+  document.querySelector(".hero-content").style.transitionDelay="0.1s";
+  setTimeout(()=>document.querySelector(".hero-content").classList.add("visible"),50);
+});
 </script>
+</body>
+</html>
