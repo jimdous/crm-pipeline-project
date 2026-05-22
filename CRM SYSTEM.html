@@ -1,0 +1,522 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
+.dash{padding:1rem 0}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.topbar h1{font-size:17px;font-weight:500;display:flex;align-items:center;gap:8px}
+.nav{display:flex;gap:2px;margin-bottom:1.25rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.nav button{font-size:12px;padding:6px 12px;border:none;background:none;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;margin-bottom:-1px;font-family:var(--font-sans)}
+.nav button.on{color:var(--color-text-primary);font-weight:500;border-bottom:2px solid #185FA5}
+.section{display:none}.section.on{display:block}
+.krow{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1rem}
+.kcard{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.klbl{font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.kval{font-size:19px;font-weight:500}
+.ksub{font-size:10px;color:var(--color-text-tertiary);margin-top:2px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px}
+.ch{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.brow{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.blbl{font-size:12px;min-width:105px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bbg{flex:1;height:7px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden}
+.bfill{height:100%;border-radius:4px}
+.bnum{font-size:11px;color:var(--color-text-secondary);min-width:40px;text-align:right}
+.badge{display:inline-block;padding:2px 7px;border-radius:var(--border-radius-md);font-size:11px;font-weight:500}
+.bg{background:#EAF3DE;color:#27500A}.br{background:#FCEBEB;color:#791F1F}
+.ba{background:#FAEEDA;color:#633806}.bb{background:#E6F1FB;color:#0C447C}
+.bgr{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.sp{display:inline-flex;align-items:center;justify-content:center;width:32px;height:17px;border-radius:9px;font-size:10px;font-weight:500}
+.sh{background:#EAF3DE;color:#27500A}.sm{background:#FAEEDA;color:#633806}.sl{background:#FCEBEB;color:#791F1F}
+.tw{overflow-x:auto}
+table{width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed}
+th{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-align:left;padding:5px 8px;border-bottom:0.5px solid var(--color-border-tertiary);text-transform:uppercase;white-space:nowrap}
+td{padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--color-background-secondary)}
+.frow{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.flbl{font-size:12px;min-width:120px}
+.fbg{flex:1;height:20px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.ffill{height:100%;display:flex;align-items:center;padding-left:6px;font-size:11px;font-weight:500;color:#fff;border-radius:3px}
+.fpct{font-size:11px;color:var(--color-text-secondary);min-width:36px;text-align:right}
+.qblock{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;margin-bottom:8px;font-family:var(--font-mono);font-size:12px;color:var(--color-text-primary);line-height:1.7;white-space:pre-wrap}
+.qbiz{font-size:12px;color:var(--color-text-secondary);margin-bottom:10px;font-family:var(--font-sans)}
+.qresult{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;margin-bottom:14px;font-size:12px}
+.qlbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-secondary);margin-bottom:6px}
+.arow{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.arow:last-child{border-bottom:none}
+.adot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.atitle{font-size:13px;font-weight:500}
+.asub{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+.rep-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.rep-row:last-child{border-bottom:none}
+.rname{font-size:13px;font-weight:500}
+.rstats{display:flex;gap:10px;font-size:12px;color:var(--color-text-secondary)}
+.stk-step{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.stk-icon{width:32px;height:32px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stk-body .t1{font-size:13px;font-weight:500}
+.stk-body .t2{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+.arrow-right{font-size:11px;color:var(--color-text-tertiary);margin:0 2px}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
+.filters select{font-size:12px;padding:4px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+</style>
+
+<h2 class="sr-only">Full CRM Pipeline System with 5 layers: dashboard, SQL queries, pipeline funnel, agent performance, and tech stack documentation.</h2>
+
+<div class="dash">
+<div class="topbar">
+  <h1><i class="ti ti-building-store" aria-hidden="true" style="font-size:17px;color:var(--color-text-secondary)"></i> Real estate CRM — full system</h1>
+  <div style="display:flex;gap:6px">
+    <button onclick="sendPrompt('Write a 1-page business explanation document for this CRM project I can put on my resume and LinkedIn')" style="font-size:12px">Business doc ↗</button>
+    <button onclick="sendPrompt('Write all the PostgreSQL CREATE TABLE and INSERT statements for this CRM project so I can set it up locally')" style="font-size:12px">Export SQL ↗</button>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="on" onclick="tab('dashboard',this)"><i class="ti ti-layout-dashboard" aria-hidden="true"></i> Dashboard</button>
+  <button onclick="tab('pipeline',this)"><i class="ti ti-filter" aria-hidden="true"></i> Pipeline</button>
+  <button onclick="tab('sql',this)"><i class="ti ti-database" aria-hidden="true"></i> SQL queries</button>
+  <button onclick="tab('agents',this)"><i class="ti ti-users" aria-hidden="true"></i> Agent performance</button>
+  <button onclick="tab('stack',this)"><i class="ti ti-stack-2" aria-hidden="true"></i> Tech stack</button>
+</div>
+
+<div id="s-dashboard" class="section on">
+  <div class="filters">
+    <select id="sf" onchange="render()"><option value="">All sources</option><option>Zillow</option><option>Referral</option><option>Instagram</option><option>Google Ads</option><option>Walk-In</option><option>Facebook Ads</option><option>Realtor.com</option></select>
+    <select id="pf" onchange="render()"><option value="">All properties</option><option>Condo</option><option>House</option><option>Rental</option></select>
+    <select id="af" onchange="render()"><option value="">All agents</option><option>Alex Chen</option><option>Brianna Cole</option><option>Marcus Webb</option><option>Diana Park</option></select>
+  </div>
+  <div class="krow" id="kpis"></div>
+  <div class="g2">
+    <div class="card"><div class="ch">Lead source breakdown</div><div id="src-bars"></div></div>
+    <div class="card"><div class="ch">Conversion rate by source</div><div id="conv-bars"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:10px"><div class="ch">Lead records — sorted by lead score</div>
+    <div class="tw"><table>
+      <thead><tr>
+        <th style="width:110px">Name</th><th style="width:55px">Score</th><th style="width:60px">Budget</th>
+        <th style="width:95px">Stage</th><th style="width:75px">Source</th><th style="width:70px">Agent</th>
+        <th style="width:65px">Property</th><th style="width:65px">Outcome</th>
+      </tr></thead>
+      <tbody id="ltbody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<div id="s-pipeline" class="section">
+  <div class="g2">
+    <div class="card"><div class="ch">Sales funnel — leads by stage</div><div id="funnel"></div></div>
+    <div class="card">
+      <div class="ch">Follow-up gap alerts</div>
+      <div id="gaps"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:10px">
+    <div class="ch">Stage-by-stage conversion drop-off</div>
+    <div style="position:relative;height:220px"><canvas id="funnelChart" role="img" aria-label="Bar chart showing lead counts at each pipeline stage from New Lead to Closed Won"></canvas></div>
+  </div>
+  <div class="g3">
+    <div class="kcard"><div class="klbl">Total pipeline value</div><div class="kval" id="pv1">—</div><div class="ksub">open deals only</div></div>
+    <div class="kcard"><div class="klbl">Weighted pipeline</div><div class="kval" id="pv2">—</div><div class="ksub">probability-adjusted</div></div>
+    <div class="kcard"><div class="klbl">Avg days to close</div><div class="kval">34</div><div class="ksub">across won deals</div></div>
+  </div>
+</div>
+
+<div id="s-sql" class="section">
+  <div style="margin-bottom:14px;font-size:13px;color:var(--color-text-secondary)">Each query answers a real business question. This is what Solutions Engineering thinking looks like.</div>
+
+  <div class="ch">Query 1 — total active pipeline value</div>
+  <div class="qbiz">Business question: How much revenue potential is currently in the pipeline?</div>
+  <div class="qblock">SELECT SUM(estimated_deal_value) AS total_pipeline
+FROM leads
+WHERE outcome = 'Open';</div>
+  <div class="qresult"><div class="qlbl">Result</div><span style="font-size:18px;font-weight:500;color:var(--color-text-success)" id="q1r">—</span><span style="font-size:12px;color:var(--color-text-secondary);margin-left:8px">in active pipeline</span></div>
+
+  <div class="ch">Query 2 — best performing lead source</div>
+  <div class="qbiz">Business question: Where should we increase marketing spend?</div>
+  <div class="qblock">SELECT lead_source,
+  COUNT(*) AS total_leads,
+  COUNT(CASE WHEN outcome='Won' THEN 1 END) AS closed_won
+FROM leads
+GROUP BY lead_source
+ORDER BY closed_won DESC;</div>
+  <div class="qresult"><div class="qlbl">Top source</div><div id="q2r" style="font-size:13px"></div></div>
+
+  <div class="ch">Query 3 — conversion rate by lead source</div>
+  <div class="qbiz">Business question: Which channels produce actual customers, not just leads?</div>
+  <div class="qblock">SELECT lead_source,
+  ROUND(COUNT(CASE WHEN outcome='Won' THEN 1 END)
+    * 100.0 / COUNT(*), 1) AS conversion_rate
+FROM leads
+GROUP BY lead_source
+ORDER BY conversion_rate DESC;</div>
+  <div class="qresult"><div class="qlbl">Results</div><div id="q3r" style="font-size:12px"></div></div>
+
+  <div class="ch">Query 4 — follow-ups needed right now</div>
+  <div class="qbiz">Business question: Which leads are at risk of falling through the cracks?</div>
+  <div class="qblock">SELECT first_name, last_name, stage,
+  estimated_deal_value, assigned_agent
+FROM leads
+WHERE follow_up_needed = TRUE
+  AND outcome = 'Open'
+ORDER BY estimated_deal_value DESC;</div>
+  <div class="qresult"><div class="qlbl">Leads needing follow-up</div><span style="font-size:18px;font-weight:500;color:var(--color-text-danger)" id="q4r">—</span></div>
+
+  <div class="ch">Query 5 — agent performance ranking</div>
+  <div class="qbiz">Business question: Who is closing the most revenue?</div>
+  <div class="qblock">SELECT assigned_agent,
+  COUNT(*) AS deals_won,
+  SUM(estimated_deal_value) AS revenue_closed
+FROM leads
+WHERE outcome = 'Won'
+GROUP BY assigned_agent
+ORDER BY revenue_closed DESC;</div>
+  <div class="qresult"><div class="qlbl">Top agent</div><div id="q5r" style="font-size:13px"></div></div>
+</div>
+
+<div id="s-agents" class="section">
+  <div class="krow" id="agent-kpis"></div>
+  <div class="card" style="margin-bottom:10px">
+    <div class="ch">Agent leaderboard</div>
+    <div id="rep-board"></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ch">Revenue closed by agent</div>
+      <div style="position:relative;height:200px"><canvas id="agentChart" role="img" aria-label="Bar chart of revenue closed by each sales agent"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ch">Deals won by agent</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;font-size:11px" id="pie-legend"></div>
+      <div style="position:relative;height:170px"><canvas id="agentPie" role="img" aria-label="Donut chart of deals won by agent"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<div id="s-stack" class="section">
+  <div class="card" style="margin-bottom:10px">
+    <div class="ch">Project architecture — 5 layers</div>
+    <div id="arch"></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="ch">Tech stack</div>
+      <div id="techstack"></div>
+    </div>
+    <div class="card">
+      <div class="ch">Target roles this project speaks to</div>
+      <div id="roles"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:10px">
+    <div class="ch">How to talk about this project in interviews</div>
+    <div id="interview-tips"></div>
+  </div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const LEADS=[
+  {name:"Maria Santos",src:"Zillow",prop:"Condo",budget:420000,stage:"Closed Won",agent:"Alex Chen",score:92,fu:false,outcome:"Won",val:420000},
+  {name:"James Carter",src:"Referral",prop:"House",budget:385000,stage:"Negotiating",agent:"Brianna Cole",score:78,fu:true,outcome:"Open",val:385000},
+  {name:"Priya Nair",src:"Google Ads",prop:"House",budget:510000,stage:"Qualified",agent:"Marcus Webb",score:71,fu:true,outcome:"Open",val:510000},
+  {name:"Tom Brennan",src:"Walk-In",prop:"Condo",budget:275000,stage:"Showing Scheduled",agent:"Diana Park",score:65,fu:false,outcome:"Open",val:275000},
+  {name:"Linda Okafor",src:"Facebook Ads",prop:"Rental",budget:340000,stage:"Contacted",agent:"Alex Chen",score:38,fu:true,outcome:"Open",val:340000},
+  {name:"Derek Holt",src:"Zillow",prop:"House",budget:295000,stage:"New Lead",agent:"Brianna Cole",score:55,fu:false,outcome:"Open",val:295000},
+  {name:"Angela Wu",src:"Referral",prop:"House",budget:625000,stage:"Closed Won",agent:"Marcus Webb",score:95,fu:false,outcome:"Won",val:625000},
+  {name:"Brian Myles",src:"Google Ads",prop:"Condo",budget:190000,stage:"Closed Lost",agent:"Diana Park",score:22,fu:false,outcome:"Lost",val:190000},
+  {name:"Cynthia Park",src:"Referral",prop:"Condo",budget:455000,stage:"Qualified",agent:"Alex Chen",score:74,fu:true,outcome:"Open",val:455000},
+  {name:"Samuel Torres",src:"Facebook Ads",prop:"House",budget:310000,stage:"Closed Won",agent:"Brianna Cole",score:88,fu:false,outcome:"Won",val:310000},
+  {name:"Rachel Kim",src:"Zillow",prop:"House",budget:540000,stage:"Negotiating",agent:"Marcus Webb",score:82,fu:true,outcome:"Open",val:540000},
+  {name:"Owen Murray",src:"Walk-In",prop:"Rental",budget:225000,stage:"New Lead",agent:"Diana Park",score:48,fu:false,outcome:"Open",val:225000},
+  {name:"Fatima Hassan",src:"Google Ads",prop:"Condo",budget:480000,stage:"Contacted",agent:"Alex Chen",score:42,fu:true,outcome:"Open",val:480000},
+  {name:"Eric Lawson",src:"Facebook Ads",prop:"House",budget:365000,stage:"Showing Scheduled",agent:"Brianna Cole",score:68,fu:false,outcome:"Open",val:365000},
+  {name:"Nadia Bloom",src:"Referral",prop:"House",budget:710000,stage:"Closed Won",agent:"Marcus Webb",score:97,fu:false,outcome:"Won",val:710000},
+  {name:"Kevin Yates",src:"Zillow",prop:"Condo",budget:260000,stage:"Closed Lost",agent:"Diana Park",score:20,fu:false,outcome:"Lost",val:260000},
+  {name:"Isabel Cruz",src:"Walk-In",prop:"Rental",budget:398000,stage:"Qualified",agent:"Alex Chen",score:69,fu:true,outcome:"Open",val:398000},
+  {name:"Marcus Bell",src:"Facebook Ads",prop:"House",budget:320000,stage:"New Lead",agent:"Brianna Cole",score:51,fu:false,outcome:"Open",val:320000},
+  {name:"Tasha Green",src:"Referral",prop:"House",budget:590000,stage:"Negotiating",agent:"Marcus Webb",score:85,fu:true,outcome:"Open",val:590000},
+  {name:"Hiro Tanaka",src:"Google Ads",prop:"Condo",budget:445000,stage:"Closed Won",agent:"Diana Park",score:90,fu:false,outcome:"Won",val:445000},
+  {name:"Sofia Reyes",src:"Instagram",prop:"Condo",budget:620000,stage:"Qualified",agent:"Alex Chen",score:77,fu:true,outcome:"Open",val:620000},
+  {name:"Nathan Brooks",src:"Realtor.com",prop:"House",budget:285000,stage:"Contacted",agent:"Brianna Cole",score:35,fu:true,outcome:"Open",val:285000},
+  {name:"Aisha Patel",src:"Instagram",prop:"House",budget:730000,stage:"Negotiating",agent:"Marcus Webb",score:88,fu:false,outcome:"Open",val:730000},
+  {name:"Carlos Vega",src:"Referral",prop:"Condo",budget:415000,stage:"Showing Scheduled",agent:"Diana Park",score:72,fu:false,outcome:"Open",val:415000},
+  {name:"Elena Moreau",src:"Realtor.com",prop:"House",budget:560000,stage:"Closed Won",agent:"Alex Chen",score:94,fu:false,outcome:"Won",val:560000},
+  {name:"David Kim",src:"Zillow",prop:"Rental",budget:310000,stage:"New Lead",agent:"Brianna Cole",score:44,fu:false,outcome:"Open",val:310000},
+  {name:"Jasmine Ford",src:"Facebook Ads",prop:"House",budget:490000,stage:"Qualified",agent:"Marcus Webb",score:66,fu:true,outcome:"Open",val:490000},
+  {name:"Ryan Nakamura",src:"Instagram",prop:"Condo",budget:375000,stage:"Closed Lost",agent:"Diana Park",score:18,fu:false,outcome:"Lost",val:375000},
+  {name:"Camille Dubois",src:"Referral",prop:"House",budget:840000,stage:"Closed Won",agent:"Alex Chen",score:96,fu:false,outcome:"Won",val:840000},
+  {name:"Trevor Shaw",src:"Realtor.com",prop:"Rental",budget:255000,stage:"Contacted",agent:"Brianna Cole",score:33,fu:true,outcome:"Open",val:255000},
+  {name:"Mei Lin",src:"Google Ads",prop:"House",budget:520000,stage:"Showing Scheduled",agent:"Marcus Webb",score:73,fu:false,outcome:"Open",val:520000},
+  {name:"Jordan Hayes",src:"Walk-In",prop:"Condo",budget:445000,stage:"Negotiating",agent:"Diana Park",score:80,fu:true,outcome:"Open",val:445000},
+  {name:"Valentina Cruz",src:"Instagram",prop:"House",budget:675000,stage:"Qualified",agent:"Alex Chen",score:79,fu:true,outcome:"Open",val:675000},
+  {name:"Darius King",src:"Zillow",prop:"House",budget:390000,stage:"Closed Won",agent:"Brianna Cole",score:91,fu:false,outcome:"Won",val:390000},
+  {name:"Lena Hoffman",src:"Realtor.com",prop:"Rental",budget:280000,stage:"New Lead",agent:"Marcus Webb",score:49,fu:false,outcome:"Open",val:280000},
+  {name:"Phoebe Grant",src:"Google Ads",prop:"Condo",budget:465000,stage:"Qualified",agent:"Diana Park",score:75,fu:true,outcome:"Open",val:465000},
+  {name:"Omar Siddiqi",src:"Referral",prop:"House",budget:780000,stage:"Closed Won",agent:"Alex Chen",score:98,fu:false,outcome:"Won",val:780000},
+  {name:"Claire Fontaine",src:"Walk-In",prop:"Rental",budget:230000,stage:"New Lead",agent:"Brianna Cole",score:41,fu:false,outcome:"Open",val:230000},
+  {name:"Felix Wagner",src:"Instagram",prop:"House",budget:550000,stage:"Showing Scheduled",agent:"Marcus Webb",score:70,fu:false,outcome:"Open",val:550000},
+  {name:"Simone Obi",src:"Zillow",prop:"Condo",budget:320000,stage:"Contacted",agent:"Diana Park",score:47,fu:true,outcome:"Open",val:320000}
+];
+
+const STAGES=["New Lead","Contacted","Qualified","Showing Scheduled","Negotiating","Closed Won","Closed Lost"];
+const SCOL={"New Lead":"#888780","Contacted":"#378ADD","Qualified":"#639922","Showing Scheduled":"#1D9E75","Negotiating":"#BA7517","Closed Won":"#185FA5","Closed Lost":"#A32D2D"};
+const PROB={"New Lead":5,"Contacted":15,"Qualified":35,"Showing Scheduled":55,"Negotiating":75,"Closed Won":100,"Closed Lost":0};
+const ACOLORS={"Alex Chen":"#185FA5","Brianna Cole":"#1D9E75","Marcus Webb":"#7F77DD","Diana Park":"#BA7517"};
+
+let chartFC=null,chartAG=null,chartPIE=null;
+
+function fmtK(n){return"$"+Math.round(n/1000)+"K"}
+function fmtM(n){return n>=1000000?"$"+Math.round(n/100000)/10+"M":fmtK(n)}
+
+function getData(){
+  const s=document.getElementById("sf").value;
+  const p=document.getElementById("pf").value;
+  const a=document.getElementById("af").value;
+  return LEADS.filter(l=>(!s||l.src===s)&&(!p||l.prop===p)&&(!a||l.agent===a));
+}
+
+function tab(id,el){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("on"));
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("on"));
+  document.getElementById("s-"+id).classList.add("on");
+  el.classList.add("on");
+  renderAll();
+}
+
+function scorePill(s){
+  let c=s>=70?"sh":s>=45?"sm":"sl";
+  return`<span class="sp ${c}">${s}</span>`;
+}
+function stageBadge(s){
+  if(s==="Closed Won")return`<span class="badge bg">${s}</span>`;
+  if(s==="Closed Lost")return`<span class="badge br">${s}</span>`;
+  if(s==="Negotiating")return`<span class="badge ba">${s}</span>`;
+  if(s==="New Lead")return`<span class="badge bgr">${s}</span>`;
+  return`<span class="badge bb">${s}</span>`;
+}
+function outcomeBadge(o){
+  if(o==="Won")return`<span class="badge bg">${o}</span>`;
+  if(o==="Lost")return`<span class="badge br">${o}</span>`;
+  return`<span style="font-size:11px;color:var(--color-text-secondary)">${o}</span>`;
+}
+
+function renderKPIs(data){
+  const won=data.filter(l=>l.outcome==="Won");
+  const lost=data.filter(l=>l.outcome==="Lost");
+  const open=data.filter(l=>l.outcome==="Open");
+  const closed=won.length+lost.length;
+  const conv=closed>0?Math.round(won.length/closed*100):0;
+  const pv=open.reduce((a,l)=>a+l.val,0);
+  const rev=won.reduce((a,l)=>a+l.val,0);
+  const avg=won.length>0?Math.round(rev/won.length):0;
+  document.getElementById("kpis").innerHTML=[
+    {l:"Total leads",v:data.length,s:"in view"},
+    {l:"Closed won",v:won.length,s:conv+"% close rate"},
+    {l:"Active pipeline",v:fmtM(pv),s:open.length+" open deals"},
+    {l:"Revenue closed",v:fmtM(rev),s:won.length+" deals"},
+    {l:"Avg deal size",v:fmtK(avg),s:"across won deals"},
+    {l:"Follow-ups due",v:data.filter(l=>l.fu&&l.outcome==="Open").length,s:"need action today"}
+  ].map(k=>`<div class="kcard"><div class="klbl">${k.l}</div><div class="kval">${k.v}</div><div class="ksub">${k.s}</div></div>`).join("");
+}
+
+function renderSrcBars(data){
+  const counts={};
+  data.forEach(l=>{counts[l.src]=(counts[l.src]||0)+1});
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const max=sorted[0]?.[1]||1;
+  document.getElementById("src-bars").innerHTML=sorted.map(([s,c])=>`
+    <div class="brow"><span class="blbl">${s}</span><div class="bbg"><div class="bfill" style="width:${Math.round(c/max*100)}%;background:#378ADD"></div></div><span class="bnum">${c}</span></div>`).join("");
+}
+
+function renderConvBars(data){
+  const map={};
+  data.forEach(l=>{
+    if(!map[l.src])map[l.src]={t:0,w:0};
+    map[l.src].t++;
+    if(l.outcome==="Won")map[l.src].w++;
+  });
+  const sorted=Object.entries(map).map(([s,d])=>({s,r:d.t>0?Math.round(d.w/d.t*100):0})).sort((a,b)=>b.r-a.r);
+  document.getElementById("conv-bars").innerHTML=sorted.map(({s,r})=>`
+    <div class="brow"><span class="blbl">${s}</span><div class="bbg"><div class="bfill" style="width:${r}%;background:#1D9E75"></div></div><span class="bnum">${r}%</span></div>`).join("");
+}
+
+function renderLeadTable(data){
+  const sorted=[...data].sort((a,b)=>b.score-a.score);
+  document.getElementById("ltbody").innerHTML=sorted.map(l=>`<tr>
+    <td style="font-weight:500">${l.name}</td>
+    <td>${scorePill(l.score)}</td>
+    <td>${fmtK(l.budget)}</td>
+    <td>${stageBadge(l.stage)}</td>
+    <td>${l.src}</td>
+    <td>${l.agent.split(" ")[0]}</td>
+    <td>${l.prop}</td>
+    <td>${outcomeBadge(l.outcome)}</td>
+  </tr>`).join("");
+}
+
+function renderFunnel(){
+  const counts={};
+  STAGES.forEach(s=>counts[s]=0);
+  LEADS.forEach(l=>counts[l.stage]++);
+  const maxC=Math.max(...Object.values(counts));
+  document.getElementById("funnel").innerHTML=STAGES.map(s=>`
+    <div class="frow">
+      <span class="flbl">${s}</span>
+      <div class="fbg"><div class="ffill" style="width:${Math.round(counts[s]/maxC*100)}%;background:${SCOL[s]}">${counts[s]}</div></div>
+      <span class="fpct">${Math.round(counts[s]/maxC*100)}%</span>
+    </div>`).join("");
+
+  const pv=LEADS.filter(l=>l.outcome==="Open").reduce((a,l)=>a+l.val,0);
+  const wp=LEADS.filter(l=>l.outcome==="Open").reduce((a,l)=>a+l.val*(PROB[l.stage]/100),0);
+  document.getElementById("pv1").textContent=fmtM(pv);
+  document.getElementById("pv2").textContent=fmtM(Math.round(wp));
+
+  const stageCounts=STAGES.map(s=>counts[s]);
+  if(chartFC){chartFC.destroy();}
+  chartFC=new Chart(document.getElementById("funnelChart"),{
+    type:"bar",
+    data:{labels:STAGES,datasets:[{label:"Leads",data:stageCounts,backgroundColor:STAGES.map(s=>SCOL[s]),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{autoSkip:false,maxRotation:35,font:{size:10}}},y:{ticks:{font:{size:10}}}}}
+  });
+}
+
+function renderGaps(){
+  const overdue=LEADS.filter(l=>l.fu&&l.outcome==="Open").sort((a,b)=>b.val-a.val).slice(0,6);
+  document.getElementById("gaps").innerHTML=overdue.map(l=>`
+    <div class="arow">
+      <div class="adot" style="background:${l.score<50?"#E24B4A":"#BA7517"}"></div>
+      <div><div class="atitle">${l.name}</div><div class="asub">${l.stage} · ${fmtK(l.val)} · ${l.agent}</div></div>
+    </div>`).join("");
+}
+
+function renderSQL(){
+  const open=LEADS.filter(l=>l.outcome==="Open");
+  const pv=open.reduce((a,l)=>a+l.val,0);
+  document.getElementById("q1r").textContent=fmtM(pv);
+
+  const srcMap={};
+  LEADS.forEach(l=>{if(!srcMap[l.src])srcMap[l.src]={t:0,w:0};srcMap[l.src].t++;if(l.outcome==="Won")srcMap[l.src].w++;});
+  const topSrc=Object.entries(srcMap).sort((a,b)=>b[1].w-a[1].w)[0];
+  document.getElementById("q2r").innerHTML=`<span style="font-weight:500">${topSrc[0]}</span> — ${topSrc[1].w} deals won out of ${topSrc[1].t} leads`;
+
+  const convRows=Object.entries(srcMap).map(([s,d])=>({s,r:d.t>0?Math.round(d.w/d.t*100):0})).sort((a,b)=>b.r-a.r).slice(0,4);
+  document.getElementById("q3r").innerHTML=convRows.map(({s,r})=>`<span style="display:inline-block;margin-right:14px;margin-bottom:4px"><span style="font-weight:500">${s}</span> ${r}%</span>`).join("");
+
+  const fu=LEADS.filter(l=>l.fu&&l.outcome==="Open").length;
+  document.getElementById("q4r").textContent=fu+" leads";
+
+  const agMap={};
+  LEADS.filter(l=>l.outcome==="Won").forEach(l=>{if(!agMap[l.agent])agMap[l.agent]={w:0,v:0};agMap[l.agent].w++;agMap[l.agent].v+=l.val;});
+  const topAg=Object.entries(agMap).sort((a,b)=>b[1].v-a[1].v)[0];
+  document.getElementById("q5r").innerHTML=`<span style="font-weight:500">${topAg[0]}</span> — ${topAg[1].w} deals · ${fmtM(topAg[1].v)} closed`;
+}
+
+function renderAgents(){
+  const agMap={};
+  LEADS.forEach(l=>{
+    if(!agMap[l.agent])agMap[l.agent]={total:0,won:0,open:0,lost:0,rev:0,pipe:0};
+    agMap[l.agent].total++;
+    if(l.outcome==="Won"){agMap[l.agent].won++;agMap[l.agent].rev+=l.val;}
+    else if(l.outcome==="Open"){agMap[l.agent].open++;agMap[l.agent].pipe+=l.val;}
+    else agMap[l.agent].lost++;
+  });
+  const sorted=Object.entries(agMap).sort((a,b)=>b[1].rev-a[1].rev);
+  const maxRev=sorted[0][1].rev;
+
+  document.getElementById("agent-kpis").innerHTML=sorted.map(([a,d])=>`
+    <div class="kcard"><div class="klbl">${a.split(" ")[0]}</div><div class="kval" style="color:${ACOLORS[a]}">${fmtM(d.rev)}</div><div class="ksub">${d.won} won · ${Math.round(d.won/d.total*100)}% rate</div></div>`).join("");
+
+  document.getElementById("rep-board").innerHTML=sorted.map(([a,d],i)=>`
+    <div class="rep-row">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:12px;color:var(--color-text-tertiary);min-width:14px">#${i+1}</span>
+        <div style="width:28px;height:28px;border-radius:50%;background:${ACOLORS[a]}22;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:${ACOLORS[a]}">${a.split(" ").map(x=>x[0]).join("")}</div>
+        <div><div class="rname">${a}</div><div style="font-size:10px;color:var(--color-text-tertiary)">${d.total} leads assigned</div></div>
+      </div>
+      <div class="rstats">
+        <span>${d.won} won</span>
+        <span style="color:var(--color-text-success)">${fmtM(d.rev)}</span>
+        <span>${Math.round(d.won/(d.won+d.lost||1)*100)}% close rate</span>
+      </div>
+    </div>`).join("");
+
+  if(chartAG){chartAG.destroy();}
+  chartAG=new Chart(document.getElementById("agentChart"),{
+    type:"bar",
+    data:{labels:sorted.map(([a])=>a.split(" ")[0]),datasets:[{label:"Revenue",data:sorted.map(([,d])=>d.rev),backgroundColor:sorted.map(([a])=>ACOLORS[a]),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>fmtK(v),font:{size:10}}},x:{ticks:{font:{size:11}}}}}
+  });
+
+  const pieColors=sorted.map(([a])=>ACOLORS[a]);
+  const pieLbls=sorted.map(([a,d])=>`${a.split(" ")[0]} ${d.won}`);
+  if(chartPIE){chartPIE.destroy();}
+  chartPIE=new Chart(document.getElementById("agentPie"),{
+    type:"doughnut",
+    data:{labels:pieLbls,datasets:[{data:sorted.map(([,d])=>d.won),backgroundColor:pieColors,borderWidth:2,borderColor:"transparent"}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:"60%"}
+  });
+  document.getElementById("pie-legend").innerHTML=sorted.map(([a,d])=>`<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--color-text-secondary)"><span style="width:9px;height:9px;border-radius:2px;background:${ACOLORS[a]};display:inline-block"></span>${a.split(" ")[0]} ${d.won}</span>`).join("");
+}
+
+function renderStack(){
+  const layers=[
+    {icon:"ti-database",col:"#E6F1FB",tcol:"#0C447C",l:"Layer 1 — Dataset",d:"40 realistic fake leads with 14 fields each: budget, source, stage, property type, outcome, agent, follow-up flag"},
+    {icon:"ti-server",col:"#EAF3DE",tcol:"#27500A",l:"Layer 2 — Database",d:"PostgreSQL: CREATE DATABASE, CREATE TABLE with proper data types (SERIAL, VARCHAR, NUMERIC, BOOLEAN, DATE)"},
+    {icon:"ti-code",col:"#FAEEDA",tcol:"#633806",l:"Layer 3 — SQL analysis",d:"5 business queries: pipeline value, source ranking, conversion rate, follow-up alerts, agent performance"},
+    {icon:"ti-chart-bar",col:"#EEEDFE",tcol:"#3C3489",l:"Layer 4 — Dashboard",d:"Power BI or Tableau connected to PostgreSQL. KPI cards, funnel chart, source analysis, agent leaderboard"},
+    {icon:"ti-file-text",col:"#E1F5EE",tcol:"#085041",l:"Layer 5 — Business doc",d:"1-2 page write-up: business problem, solution, tech stack, business impact. This is what most students skip."}
+  ];
+  document.getElementById("arch").innerHTML=layers.map(x=>`
+    <div class="stk-step">
+      <div class="stk-icon" style="background:${x.col}"><i class="ti ${x.icon}" aria-hidden="true" style="color:${x.tcol};font-size:16px"></i></div>
+      <div class="stk-body"><div class="t1">${x.l}</div><div class="t2">${x.d}</div></div>
+    </div>`).join("");
+
+  const tech=[
+    {t:"PostgreSQL",d:"Database — store all lead data"},
+    {t:"pgAdmin",d:"GUI to write and test SQL"},
+    {t:"SQL",d:"Query language — business analysis"},
+    {t:"Power BI / Tableau",d:"Dashboard visualization"},
+    {t:"Excel / CSV",d:"Data generation and staging"},
+    {t:"GitHub",d:"Version control + portfolio hosting"},
+    {t:"LinkedIn",d:"Featured section — showcase project"}
+  ];
+  document.getElementById("techstack").innerHTML=tech.map(t=>`
+    <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary)">
+      <span style="font-size:13px;font-weight:500">${t.t}</span>
+      <span style="font-size:12px;color:var(--color-text-secondary)">${t.d}</span>
+    </div>`).join("");
+
+  const roles=["Solutions Engineering","Customer Success","RevOps / Sales Ops","CRM Administrator","Technical Consulting","SaaS Implementation","Technical Account Management","Business Analyst"];
+  document.getElementById("roles").innerHTML=roles.map(r=>`<span class="badge bb" style="margin:3px 3px 3px 0;display:inline-block">${r}</span>`).join("");
+
+  const tips=[
+    {q:"What is this project?",a:"A mini-Salesforce I built to simulate how real estate sales teams track leads, measure conversion, and manage pipeline health — end to end."},
+    {q:"Why did you build it?",a:"Most CRM roles expect you to understand customer lifecycle, pipeline stages, and reporting. I wanted to build something that demonstrated I already think that way."},
+    {q:"What does the SQL do?",a:"Each query answers a business question — where to spend marketing budget, which leads need follow-up today, who the top-performing agent is. The SQL is the business logic layer."},
+    {q:"How does this relate to Solutions Engineering?",a:"SE is about translating business problems into technical solutions. This project does exactly that — starting from a business problem and building a system to solve it."}
+  ];
+  document.getElementById("interview-tips").innerHTML=tips.map(t=>`
+    <div style="margin-bottom:10px;padding-bottom:10px;border-bottom:0.5px solid var(--color-border-tertiary)">
+      <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:3px">Q: ${t.q}</div>
+      <div style="font-size:13px">${t.a}</div>
+    </div>`).join("");
+}
+
+function renderAll(){
+  const data=getData();
+  const active=document.querySelector(".section.on").id;
+  if(active==="s-dashboard"){renderKPIs(data);renderSrcBars(data);renderConvBars(data);renderLeadTable(data);}
+  if(active==="s-pipeline"){renderFunnel();renderGaps();}
+  if(active==="s-sql"){renderSQL();}
+  if(active==="s-agents"){renderAgents();}
+  if(active==="s-stack"){renderStack();}
+}
+
+function render(){renderAll();}
+renderAll();
+</script>
