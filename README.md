@@ -1,6 +1,7 @@
 # Real Estate CRM Pipeline Dashboard
 
 **Live Site:** https://jimdous.github.io/crm-pipeline-project/
+**Demo Video:** *(coming soon)*
 
 A full-stack CRM portfolio project demonstrating SaaS thinking, database design, SQL analytics, and business reporting — built to showcase Solutions Engineering and RevOps skills.
 
@@ -10,7 +11,7 @@ A full-stack CRM portfolio project demonstrating SaaS thinking, database design,
 
 This project simulates a real-world CRM pipeline system for a real estate agency. It tracks leads from first contact through closed deal, supports multiple agents, and provides SQL-powered business analytics across a normalized PostgreSQL database.
 
-A recruiter opening this repo should see: a live frontend, a production-style database, and the ability to ask and answer business questions with SQL.
+A recruiter opening this repo will find: a live frontend, a production-style database, and demonstrated ability to ask and answer business questions with SQL.
 
 ---
 
@@ -74,8 +75,8 @@ crm_pipeline
 | assigned_agent | VARCHAR | Jim Ferdous, Sarah Kim, Mike Patel, Emily Chen |
 | created_date | DATE | Lead creation date |
 | last_contact_date | DATE | Most recent contact |
-| property_interest | VARCHAR | Condo, Single Family, etc. |
-| lead_score | INTEGER | Engagement score 0-100 |
+| property_interest | VARCHAR | Condo, Single Family, Luxury, Commercial |
+| lead_score | INTEGER | Engagement score 0–100 |
 | outcome | VARCHAR | Purchased, Lost, NULL |
 | city | VARCHAR | Bay Area city |
 | budget | DECIMAL | Buyer budget |
@@ -100,25 +101,26 @@ leads (PK: lead_id)
   └── deals (FK: lead_id)
 ```
 
-See `/docs/crm_erd.png` for the full diagram.
+![CRM Entity Relationship Diagram](docs/crm_erd.png)
 
 ---
 
 ## SQL Analysis
 
-All queries are in `/sql/sql_queries.sql`.
+All queries are in [`/sql/sql_queries.sql`](sql/sql_queries.sql).
 
-| Query | Business Question |
-|---|---|
-| 1 | What is the total pipeline value? |
-| 2 | Which lead sources generate the most leads? |
-| 3 | Which source drives the most deal value? |
-| 4 | Which leads need follow-up today? |
-| 5 | How does pipeline value break down by agent? |
-| 6 | How many leads are in each funnel stage? |
-| 7 | What are the top deals by value? |
-| 8 (bonus) | Win/loss rate by agent |
-| 9 (bonus) | Average lead score by property type |
+| # | Business Question | Key Result |
+|---|---|---|
+| 1 | Total pipeline value? | **$21,495,000** |
+| 2 | Which sources generate the most leads? | Zillow, Referral, Website |
+| 3 | Which source drives the most deal value? | Zillow ($4.31M) |
+| 4 | Which leads need follow-up today? | 17 of 30 flagged |
+| 5 | Pipeline value by agent? | Jim Ferdous leads at $7.29M |
+| 6 | Lead distribution by funnel stage? | New Lead (8) and Contacted (7) largest |
+| 7 | Top 10 deals by value? | Range $1.1M–$1.2M |
+| 8 | Win/loss rate by agent? | Jim Ferdous 75% win rate |
+| 9 | Avg lead score by property type? | Luxury (82.5) leads all types |
+| 10 | Weighted deal value from open deals? | Cross-table JOIN with deals table |
 
 **Sample result — Pipeline Value by Agent:**
 ```
@@ -138,19 +140,21 @@ Emily Chen     7 leads    $3,540,000    avg $506K
 - **Top agent by pipeline?** Jim Ferdous at $7.29M across 8 leads
 - **Active pipeline value?** $21.5M total across 7 lead sources
 - **Leads needing follow-up?** 17 of 30 leads flagged for immediate action
+- **Highest close rate?** Jim Ferdous at 75% win rate
 
 ---
 
 ## Screenshots
 
-See `/screenshots/` folder:
+See `/screenshots/` folder for all project screenshots:
+
 1. `01_website_homepage.jpg` — Live website
 2. `02_dashboard.jpg` — Dashboard with KPI cards
 3. `03_pgadmin_database.jpg` — Database tree + table counts
 4. `04_leads_table.jpg` — SELECT * FROM leads (30 rows)
-5. `05_pipeline_value.jpg` — Total pipeline value query
-6. `06_revenue_by_source.jpg` — Revenue by lead source
-7. `07_agent_performance.jpg` — Pipeline by agent
+5. `05_pipeline_value.jpg` — Total pipeline value query: $21,495,000
+6. `06_revenue_by_source.jpg` — Revenue breakdown by lead source
+7. `07_agent_performance.jpg` — Pipeline value by agent
 
 ---
 
@@ -158,7 +162,7 @@ See `/screenshots/` folder:
 
 - Connect live PostgreSQL data to the frontend dashboard
 - Build Power BI / Tableau reports on top of the database
-- Add predictive lead scoring using Python / ML
+- Add predictive lead scoring using Python
 - Expand to multi-region pipeline tracking
 - Automate weekly pipeline reports via SQL + email
 
@@ -166,6 +170,6 @@ See `/screenshots/` folder:
 
 ## Author
 
-**Jim Ferdous** — Aspiring Solutions Engineer / RevOps Analyst  
-GitHub: [@jimdous](https://github.com/jimdous)  
+**Jim Ferdous** — Aspiring Solutions Engineer / RevOps Analyst
+GitHub: [@jimdous](https://github.com/jimdous)
 Live Project: https://jimdous.github.io/crm-pipeline-project/
