@@ -13,6 +13,12 @@ This project simulates a real-world CRM pipeline system for a real estate agency
 
 A recruiter opening this repo will find: a live frontend, a production-style database, and demonstrated ability to ask and answer business questions with SQL.
 
+### Homepage
+![Website Homepage](screenshots/01_website_homepage.jpg)
+
+### Dashboard
+![CRM Dashboard](screenshots/02_dashboard.jpg)
+
 ---
 
 ## Business Problem
@@ -90,6 +96,8 @@ Linked to leads via `lead_id`. Stores deal name, close probability %, and expect
 ### activities
 Linked to contacts via `contact_id`. Logs calls, tours, proposals, and closings with dates and notes.
 
+![pgAdmin Database View](screenshots/03_pgadmin_database.jpg)
+
 ---
 
 ## Entity Relationship Diagram
@@ -122,6 +130,8 @@ All queries are in [`/sql/sql_queries.sql`](sql/sql_queries.sql).
 | 9 | Avg lead score by property type? | Luxury (82.5) leads all types |
 | 10 | Weighted deal value from open deals? | Cross-table JOIN with deals table |
 
+![Leads Table Query Result](screenshots/04_leads_table.jpg)
+
 **Sample result — Pipeline Value by Agent:**
 ```
 Jim Ferdous    8 leads    $7,295,000    avg $912K
@@ -130,7 +140,27 @@ Mike Patel     7 leads    $5,060,000    avg $723K
 Emily Chen     7 leads    $3,540,000    avg $506K
 ```
 
+![Pipeline Value Query](screenshots/05_pipeline_value.jpg)
+
+![Agent Performance Query](screenshots/07_agent_performance.jpg)
+
 **Total pipeline: $21,495,000 across 30 leads**
+
+---
+
+## Business Insights
+
+### Pipeline Value
+Total pipeline value: **$21,495,000** across 30 active leads.
+
+### Lead Sources
+Zillow generated the highest pipeline value at $4.31M, followed by Facebook ($3.89M) and Referral ($3.67M). Zillow, Referral, and Website also produced the highest lead volume.
+
+### Pipeline Stages
+Most leads sit at the top of the funnel — **New Lead** (8) and **Contacted** (7) — highlighting an opportunity to speed up qualification and follow-up.
+
+### Agent Performance
+**Jim Ferdous** manages the largest pipeline at $7.29M across 8 leads, with a 75% win rate — the highest of any agent on the team.
 
 ---
 
@@ -141,20 +171,6 @@ Emily Chen     7 leads    $3,540,000    avg $506K
 - **Active pipeline value?** $21.5M total across 7 lead sources
 - **Leads needing follow-up?** 17 of 30 leads flagged for immediate action
 - **Highest close rate?** Jim Ferdous at 75% win rate
-
----
-
-## Screenshots
-
-See `/screenshots/` folder for all project screenshots:
-
-1. `01_website_homepage.jpg` — Live website
-2. `02_dashboard.jpg` — Dashboard with KPI cards
-3. `03_pgadmin_database.jpg` — Database tree + table counts
-4. `04_leads_table.jpg` — SELECT * FROM leads (30 rows)
-5. `05_pipeline_value.jpg` — Total pipeline value query: $21,495,000
-6. `06_revenue_by_source.jpg` — Revenue breakdown by lead source
-7. `07_agent_performance.jpg` — Pipeline value by agent
 
 ---
 
