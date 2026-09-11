@@ -15,6 +15,8 @@ The frontend and API share an origin in this setup. The database should use priv
 
 Reference: [Render Blueprint specification](https://render.com/docs/blueprint-spec).
 
+The free database expires 30 days after creation. The free web service sleeps after 15 idle minutes and may take about a minute to wake. Keep the demo on a paid database or migrate before expiration for a lasting portfolio link. See [Render's free-plan limits](https://render.com/docs/free). No paid resources have been authorized or created.
+
 ## Separate frontend hosting (optional)
 
 GitHub Pages can serve HTML/CSS/JavaScript but cannot run FastAPI or PostgreSQL. First deploy the API. Then set `window.CRM_API_BASE` in `static/config.js` to the API's HTTPS origin, and configure `CORS_ORIGINS` on the API, for example `["https://jimdous.github.io"]`. An origin contains no path or trailing slash. Deploy only after checking cross-origin reads and authenticated writes. No credentials belong in `config.js`.
