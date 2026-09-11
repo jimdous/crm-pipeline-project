@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, timezone
 from decimal import Decimal
 from typing import Annotated, Literal
 
@@ -7,6 +7,10 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 Stage = Literal["New Lead", "Contacted", "Qualified", "Showing Scheduled", "Negotiating", "Closed Won", "Closed Lost"]
 Name = Annotated[str, Field(min_length=1, max_length=50)]
 Money = Annotated[Decimal, Field(gt=0, max_digits=12, decimal_places=2)]
+
+
+def today() -> date:
+    return datetime.now(timezone.utc).date()
 
 
 class LeadCreate(BaseModel):
@@ -20,19 +24,19 @@ class LeadCreate(BaseModel):
     budget: Money | None = None
     stage: Stage = "New Lead"
     assigned_agent: Annotated[str, Field(min_length=1, max_length=100)] | None = None
-    created_date: date = Field(default_factory=date.today)
+    created_date: date = Field(default_factory=today)
     last_contact_date: date | None = None
     follow_up_needed: bool = False
     estimated_deal_value: Money | None = None
 
     @model_validator(mode="after")
     def dates_are_consistent(self):
-        if self.created_date > date.today():
+        if self.created_date > today():
             raise ValueError("Created date cannot be in the future")
         if self.last_contact_date:
             if self.last_contact_date < self.created_date:
                 raise ValueError("Last contact cannot precede created date")
-            if self.last_contact_date > date.today():
+            if self.last_contact_date > today():
                 raise ValueError("Last contact cannot be in the future")
         return self
 
@@ -90,4 +94,3 @@ class LeadPage(BaseModel):
 
 def outcome_for(stage: str) -> str:
     return {"Closed Won": "Won", "Closed Lost": "Lost"}.get(stage, "Open")
-

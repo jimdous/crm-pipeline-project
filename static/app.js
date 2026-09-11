@@ -4,11 +4,11 @@ const $ = (id) => document.getElementById(id);
 const STAGES = ["New Lead", "Contacted", "Qualified", "Showing Scheduled", "Negotiating", "Closed Won", "Closed Lost"];
 const COLORS = ["#6384b0", "#639fff", "#57dcaf", "#55d1dc", "#ffc46c", "#b395ff", "#ff9191"];
 const base = (window.CRM_API_BASE || "").replace(/\/$/, "");
-const state = {key: "", view: "overview", offset: 0, total: 0, limit: 10, rows: [], editing: null, publicDemo: false, request: 0, controller: null};
-const money = (value) => new Intl.NumberFormat("en-US", {style: "currency", currency: "USD", maximumFractionDigits: 0}).format(Number(value || 0));
+const state = {key: "", view: "overview", offset: 0, total: 0, limit: 10, editing: null, publicDemo: false, ready: false, saving: false, today: null, request: 0, refresh: 0, controller: null};
+const money = (value) => new Intl.NumberFormat("en-US", {style: "currency", currency: "USD", maximumFractionDigits: 2}).format(Number(value || 0));
 const compactMoney = (value) => new Intl.NumberFormat("en-US", {style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 2}).format(Number(value || 0));
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
-const localDate = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+const localDate = () => state.today || new Date().toISOString().slice(0, 10);
 const dateLabel = (value) => value ? new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {month: "short", day: "numeric", year: "numeric"}) : "Never contacted";
 
 async function api(path, options = {}) {
@@ -18,11 +18,15 @@ async function api(path, options = {}) {
     response = await fetch(base + path, {...options, headers, signal: options.signal || AbortSignal.timeout(15000)});
   } catch (error) {
     if (error.name === "AbortError") throw error;
-    throw new Error("Cannot reach the API. Check that the backend is running, then refresh.");
+    throw new Error("Unable to connect. Please try Refresh in a moment.");
   }
   if (response.status === 204) return null;
   const body = await response.json().catch(() => null);
   if (!response.ok) {
+    if (response.status === 401 && state.key) {
+      lockWorkspace();
+      showError("Your access key was rejected. Unlock the workspace to try again.");
+    }
     const detail = body?.detail;
     const message = Array.isArray(detail) ? detail.map((e) => `${(e.loc || []).filter((p) => p !== "body").join(".") || "Lead"}: ${e.msg}`).join("\n") : detail;
     const error = new Error(message || `Request failed (${response.status})`);
@@ -37,8 +41,31 @@ function showError(message) { $("error").textContent = message; $("error").hidde
 let toastTimer;
 function toast(message) { clearTimeout(toastTimer); $("toast").textContent = message; $("toast").hidden = false; toastTimer = setTimeout(() => $("toast").hidden = true, 5000); }
 function accessState() {
-  $("new-lead").disabled = !state.key;
-  $("access-button").textContent = state.key ? "Lock workspace" : "Unlock editing";
+  $("new-lead").disabled = !state.key || state.saving;
+  $("access-button").textContent = state.key ? "Lock workspace" : state.publicDemo ? "Unlock editing" : "Unlock workspace";
+}
+
+function lockWorkspace() {
+  state.key = "";
+  state.refresh++;
+  state.request++;
+  state.controller?.abort();
+  state.editing = null;
+  $("lead-dialog").close();
+  $("delete-dialog").close();
+  $("lead-form").reset();
+  $("refresh").disabled = false;
+  accessState();
+  if (!state.publicDemo) {
+    $("dashboard").hidden = true;
+    for (const id of ["lead-rows", "kpis", "agents", "sources", "stages", "agent-options", "source-options"]) $(id).replaceChildren();
+    $("agent-filter").innerHTML = '<option value="">All agents</option>';
+    $("source-filter").innerHTML = '<option value="">All sources</option>';
+    $("search").value = "";
+    $("connection").textContent = "Workspace locked";
+    $("connection").classList.remove("online");
+    $("updated").textContent = "Unlock the workspace to load leads.";
+  }
 }
 
 function renderAnalytics(data) {
@@ -85,7 +112,7 @@ function followupLabel(lead) {
 }
 
 function renderRows(page) {
-  state.rows = page.items;
+  state.offset = page.offset;
   state.total = page.total;
   $("lead-count").textContent = `${page.total} matching ${page.total === 1 ? "lead" : "leads"}`;
   $("lead-rows").innerHTML = page.items.length ? page.items.map((l) => {
@@ -98,6 +125,7 @@ function renderRows(page) {
 }
 
 async function loadLeads() {
+  if (!state.ready || (!state.publicDemo && !state.key)) return;
   const request = ++state.request;
   state.controller?.abort();
   state.controller = new AbortController();
@@ -106,6 +134,7 @@ async function loadLeads() {
   if (state.view === "followup") params.set("follow_up", "true");
   $("lead-rows").classList.add("loading");
   $("lead-rows").setAttribute("aria-busy", "true");
+  $("previous").disabled = $("next").disabled = true;
   try {
     const page = await api(`/leads?${params}`, {signal: AbortSignal.any([state.controller.signal, AbortSignal.timeout(15000)])});
     if (request !== state.request) return;
@@ -114,6 +143,7 @@ async function loadLeads() {
       return loadLeads();
     }
     renderRows(page);
+    showError("");
   } catch (error) {
     if (request === state.request && error.name !== "AbortError") {
       $("lead-rows").innerHTML = '<tr><td colspan="7" class="empty">Leads could not be loaded. Check access and refresh to retry.</td></tr>';
@@ -127,23 +157,31 @@ async function loadLeads() {
 }
 
 async function refresh() {
+  if (!state.ready) return start();
+  if (!state.publicDemo && !state.key) { $("access-dialog").showModal(); return; }
+  const version = ++state.refresh;
   showError("");
   $("refresh").disabled = true;
   $("connection").textContent = "Refreshing…";
   try {
-    const [analytics, metadata] = await Promise.all([api("/analytics"), api("/metadata")]);
+    const [analytics, metadata, config] = await Promise.all([api("/analytics"), api("/metadata"), api("/config")]);
+    if (version !== state.refresh) return;
+    state.today = config.today;
+    $("dashboard").hidden = false;
     renderAnalytics(analytics);
     renderMetadata(metadata);
     await loadLeads();
+    if (version !== state.refresh) return;
     $("connection").textContent = "Database connected";
     $("connection").classList.add("online");
     $("updated").textContent = `Updated ${new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})} · Metrics cover all leads; filters apply to the directory.`;
   } catch (error) {
+    if (version !== state.refresh) { showError(error.message); return; }
     showError(error.message);
     $("connection").textContent = "Connection needs attention";
     $("connection").classList.remove("online");
     $("updated").textContent = "Refresh failed · previously loaded data may be out of date.";
-  } finally { $("refresh").disabled = false; }
+  } finally { if (version === state.refresh) $("refresh").disabled = false; }
 }
 
 function switchView(view) {
@@ -161,8 +199,11 @@ function switchView(view) {
 }
 
 async function openLead(id = null) {
+  if (state.saving) return;
+  const version = state.refresh;
   try {
     const lead = id ? await api(`/leads/${id}`) : null;
+    if (version !== state.refresh || (!state.publicDemo && !state.key)) return;
     state.editing = lead;
     $("lead-form").reset();
     $("form-error").textContent = "";
@@ -179,11 +220,13 @@ async function openLead(id = null) {
     $("delete-lead").hidden = !lead || !state.key;
     $("save-lead").hidden = !state.key;
     $("lead-dialog").showModal();
+    fields.first_name.focus();
   } catch (error) { showError(error.message); }
 }
 
 $("lead-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (state.saving || !state.key) return;
   $("form-error").textContent = "";
   const values = {};
   for (const element of $("lead-form").elements) {
@@ -193,15 +236,29 @@ $("lead-form").addEventListener("submit", async (event) => {
   // Send only changed fields for PATCH, preserving unrelated concurrent edits.
   const payload = state.editing ? Object.fromEntries(Object.entries(values).filter(([key, value]) => String(value ?? "") !== String(state.editing[key] ?? ""))) : values;
   if (!Object.keys(payload).length) { $("lead-dialog").close(); return; }
-  $("save-lead").disabled = true;
-  $("delete-lead").disabled = true;
+  const editing = state.editing;
+  setSaving(true);
   try {
-    await api(state.editing ? `/leads/${state.editing.lead_id}` : "/leads", {method: state.editing ? "PATCH" : "POST", body: JSON.stringify(payload)});
+    await api(editing ? `/leads/${editing.lead_id}` : "/leads", {method: editing ? "PATCH" : "POST", body: JSON.stringify(payload)});
     $("lead-dialog").close();
-    toast(state.editing ? "Lead updated and saved to PostgreSQL." : "Lead created and saved to PostgreSQL.");
+    toast(editing ? "Lead updated." : "Lead created.");
     await refresh();
   } catch (error) { $("form-error").textContent = error.message; }
-  finally { $("save-lead").disabled = $("delete-lead").disabled = false; }
+  finally { setSaving(false); }
+});
+
+function setSaving(saving) {
+  state.saving = saving;
+  for (const id of ["lead-dialog", "delete-dialog"]) {
+    $(id).querySelectorAll("button").forEach((button) => button.disabled = saving);
+  }
+  $("access-button").disabled = saving;
+  $("save-lead").textContent = saving ? "Saving…" : "Save lead";
+  accessState();
+}
+
+for (const id of ["lead-dialog", "delete-dialog"]) $(id).addEventListener("cancel", (event) => {
+  if (state.saving) event.preventDefault();
 });
 
 $("delete-lead").addEventListener("click", () => {
@@ -210,29 +267,20 @@ $("delete-lead").addEventListener("click", () => {
   $("delete-dialog").showModal();
 });
 $("confirm-delete").addEventListener("click", async () => {
-  $("confirm-delete").disabled = true;
+  if (state.saving || !state.key || !state.editing) return;
+  const leadId = state.editing.lead_id;
+  setSaving(true);
   try {
-    await api(`/leads/${state.editing.lead_id}`, {method: "DELETE"});
+    await api(`/leads/${leadId}`, {method: "DELETE"});
     $("delete-dialog").close(); $("lead-dialog").close();
     toast("Lead deleted."); await refresh();
   } catch (error) { $("delete-error").textContent = error.message; }
-  finally { $("confirm-delete").disabled = false; }
+  finally { setSaving(false); }
 });
 
 $("access-button").addEventListener("click", () => {
   if (state.key) {
-    state.key = ""; accessState();
-    if (!state.publicDemo) {
-      state.controller?.abort(); state.request++;
-      state.rows = []; state.editing = null;
-      $("dashboard").hidden = true;
-      $("lead-rows").replaceChildren();
-      $("kpis").replaceChildren();
-      $("agents").replaceChildren();
-      $("sources").replaceChildren();
-      $("connection").textContent = "Workspace locked";
-      $("connection").classList.remove("online");
-    }
+    lockWorkspace();
     toast("Workspace locked.");
   } else { $("access-error").textContent = ""; $("access-key").value = ""; $("access-dialog").showModal(); }
 });
@@ -241,6 +289,7 @@ $("access-form").addEventListener("submit", async (event) => {
   const key = $("access-key").value;
   try {
     await api("/session", {headers: {Authorization: `Bearer ${key}`}});
+    if (!$("access-dialog").open) return;
     state.key = key; $("access-key").value = "";
     $("access-dialog").close(); accessState();
     $("dashboard").hidden = false;
@@ -257,6 +306,7 @@ $("refresh").addEventListener("click", refresh);
 $("previous").addEventListener("click", () => { state.offset = Math.max(0, state.offset - state.limit); loadLeads().catch((e) => showError(e.message)); });
 $("next").addEventListener("click", () => { state.offset += state.limit; loadLeads().catch((e) => showError(e.message)); });
 $("filters").addEventListener("submit", (event) => event.preventDefault());
+$("clear-filters").addEventListener("click", () => switchView(state.view));
 let searchTimer;
 $("search").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { state.offset = 0; loadLeads().catch((e) => showError(e.message)); }, 250); });
 for (const id of ["stage-filter", "agent-filter", "source-filter", "sort"]) $(id).addEventListener("change", () => { state.offset = 0; loadLeads().catch((e) => showError(e.message)); });
@@ -266,16 +316,22 @@ $("today").textContent = new Date().toLocaleDateString("en-US", {weekday: "long"
 $("api-docs").href = base + "/docs";
 
 async function start() {
+  $("refresh").disabled = true;
+  showError("");
   try {
     const config = await api("/config");
+    state.ready = true;
     state.publicDemo = config.public_demo;
+    state.today = config.today;
+    accessState();
     $("demo-notice").hidden = !state.publicDemo;
-    if (!state.publicDemo) {
+    if (!state.publicDemo && !state.key) {
       $("dashboard").hidden = true;
       $("connection").textContent = "Workspace locked";
       $("access-button").textContent = "Unlock workspace";
       $("access-dialog").showModal();
     } else await refresh();
-  } catch (error) { showError(error.message); $("dashboard").hidden = true; $("connection").textContent = "API unavailable"; }
+  } catch (error) { state.ready = false; showError(error.message); $("dashboard").hidden = true; $("connection").textContent = "API unavailable"; }
+  finally { $("refresh").disabled = false; }
 }
 start();

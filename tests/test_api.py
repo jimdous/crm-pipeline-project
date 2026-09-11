@@ -1,9 +1,10 @@
-from datetime import date, timedelta
+from datetime import timedelta
 
 import psycopg
 import pytest
 
 from backend.config import get_settings
+from backend.schemas import today
 
 
 def create(client, auth, lead, **changes):
@@ -42,8 +43,8 @@ def test_full_crud_persistence(client, auth, lead):
     {"budget": -1}, {"budget": 0}, {"estimated_deal_value": "1.001"},
     {"estimated_deal_value": "10000000000"}, {"stage": "Unicorn"},
     {"created_date": "bad-date"}, {"last_contact_date": "2023-12-01"},
-    {"created_date": str(date.today() + timedelta(days=1))},
-    {"last_contact_date": str(date.today() + timedelta(days=1))},
+    {"created_date": str(today() + timedelta(days=1))},
+    {"last_contact_date": str(today() + timedelta(days=1))},
     {"outcome": "Won"}, {"lead_id": 900}, {"assigned_agent": "x" * 101},
 ])
 def test_invalid_create_is_not_persisted(client, auth, lead, changes):
@@ -99,10 +100,10 @@ def test_search_filters_sort_and_pagination(client, auth, lead):
 
 
 def test_followup_queue_rules(client, auth, lead):
-    today = date.today()
-    create(client, auth, lead, first_name="Fresh", last_contact_date=str(today))
-    create(client, auth, lead, first_name="Flagged", follow_up_needed=True, last_contact_date=str(today))
-    create(client, auth, lead, first_name="Stale", last_contact_date=str(today-timedelta(days=7)))
+    current_date = today()
+    create(client, auth, lead, first_name="Fresh", last_contact_date=str(current_date))
+    create(client, auth, lead, first_name="Flagged", follow_up_needed=True, last_contact_date=str(current_date))
+    create(client, auth, lead, first_name="Stale", last_contact_date=str(current_date-timedelta(days=7)))
     create(client, auth, lead, first_name="Never", last_contact_date=None)
     create(client, auth, lead, first_name="Closed", stage="Closed Won", follow_up_needed=True)
     page = client.get("/leads?follow_up=true&sort=contact").json()
@@ -152,3 +153,53 @@ def test_output_escapable_strings_are_stored_as_data(client, auth, lead):
     saved = create(client, auth, lead, first_name='<img src=x onerror="alert(1)">')
     assert saved["first_name"] == '<img src=x onerror="alert(1)">'
     assert client.get("/leads").headers["cache-control"] == "no-store"
+
+
+def test_unauthorized_mutations_leave_data_unchanged(client, auth, lead, monkeypatch):
+    saved = create(client, auth, lead)
+    path = f"/leads/{saved['lead_id']}"
+    for headers in ({}, {"Authorization": "Bearer wrong-key"}):
+        assert client.patch(path, headers=headers, json={"stage": "Closed Won"}).status_code == 401
+        assert client.delete(path, headers=headers).status_code == 401
+        assert client.get(path).json() == saved
+    monkeypatch.setenv("PUBLIC_DEMO", "false")
+    get_settings.cache_clear()
+    assert client.get(path).status_code == 401
+    assert client.get(path, headers=auth).json() == saved
+
+
+def test_sorts_and_combined_filters(client, auth, lead):
+    first = create(client, auth, lead, first_name="Amy", last_name="Able", created_date="2023-01-01", estimated_deal_value=None)
+    second = create(client, auth, lead, first_name="Bea", last_name="Baker", created_date="2024-01-01", last_contact_date="2024-01-09")
+    for sort, expected in [("oldest", first), ("newest", second), ("name", first), ("contact", second), ("value", second)]:
+        assert client.get("/leads", params={"sort": sort, "limit": 1}).json()["items"][0]["lead_id"] == expected["lead_id"]
+    params = {"q": "Amy", "agent": "Alex Chen", "source": "Referral", "stage": "Qualified", "follow_up": "true"}
+    assert client.get("/leads", params=params).json()["total"] == 1
+    params["stage"] = "New Lead"
+    assert client.get("/leads", params=params).json()["total"] == 0
+
+
+def test_seed_on_create_does_not_restore_deleted_leads(client, auth):
+    from backend.database import connection
+    from backend.init_db import initialize
+    initialize(seed=True)
+    for row in client.get("/leads?limit=100").json()["items"]:
+        assert client.delete(f"/leads/{row['lead_id']}", headers=auth).status_code == 204
+    initialize(seed_on_create=True)
+    assert client.get("/leads").json()["total"] == 0
+    with connection() as conn:
+        assert conn.execute("SELECT count(*) AS n FROM schema_migrations").fetchone()["n"] == 2
+
+
+@pytest.mark.parametrize("assignment", [
+    "first_name = ''", "last_name = '   '", "budget = 0", "estimated_deal_value = -1",
+    "stage = 'Unknown'", "stage = NULL", "outcome = 'Won'", "outcome = NULL",
+    "created_date = NULL", "last_contact_date = '2020-01-01'", "follow_up_needed = NULL",
+])
+def test_database_constraints_reject_invalid_direct_writes(client, auth, lead, assignment):
+    from backend.database import connection
+    saved = create(client, auth, lead)
+    with pytest.raises(psycopg.IntegrityError):
+        with connection() as conn:
+            conn.execute(f"UPDATE leads SET {assignment} WHERE lead_id = %s", (saved["lead_id"],))
+    assert client.get(f"/leads/{saved['lead_id']}").json() == saved

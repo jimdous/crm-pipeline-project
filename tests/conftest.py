@@ -7,7 +7,6 @@ import pytest
 from fastapi.testclient import TestClient
 from psycopg import sql
 from psycopg.conninfo import make_conninfo
-from psycopg.rows import dict_row
 
 from backend.config import get_settings
 from backend.main import app
@@ -25,17 +24,9 @@ def client(monkeypatch):
     monkeypatch.setenv("API_KEY", "test-access-key")
     monkeypatch.setenv("PUBLIC_DEMO", "true")
     get_settings.cache_clear()
-    # Production connection options enforce a timeout. Add schema isolation separately.
-    from contextlib import contextmanager
-    @contextmanager
-    def test_connection():
-        with psycopg.connect(url, row_factory=dict_row, options=f"-c search_path={schema}") as conn:
-            yield conn
-    monkeypatch.setattr("backend.main.connection", test_connection)
-    monkeypatch.setattr("backend.init_db.connection", test_connection)
     from backend.init_db import initialize
-    initialize()
     try:
+        initialize()
         with TestClient(app) as instance:
             yield instance
     finally:

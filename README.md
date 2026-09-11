@@ -2,7 +2,7 @@
 
 A real estate lead workspace with a JavaScript frontend, a FastAPI REST API, and persistent PostgreSQL storage. Create, find, update, and delete leads; inspect pipeline metrics; and see which open leads need follow-up.
 
-**Status:** implemented and tested locally. Public V2 deployment is pending a hosting account. The existing GitHub Pages deployment is V1 until deliberately updated. This is a single-workspace portfolio application, not a multi-tenant CRM service.
+**Status:** implemented and tested locally; Render deployment is in progress. The existing GitHub Pages deployment is V1 until deliberately updated. This is a single-workspace portfolio application.
 
 ## Architecture
 
@@ -11,7 +11,7 @@ Browser (index.html + static/)
     ↓ fetch / JSON / HTTP
 FastAPI (backend/main.py)
     ↓ Pydantic validation + parameterized SQL
-PostgreSQL (one leads table)
+PostgreSQL (leads + migration history)
 ```
 
 The API serves the frontend itself, so local development needs one web server and no CORS configuration. PostgreSQL is the runtime source of truth. The CSV is an optional synthetic seed, not a live data store. The historical V1 dashboard is retained in `docs/v1-dashboard.html` and is not served by the API.
@@ -37,7 +37,7 @@ python -m uvicorn backend.main:app --reload --no-access-log
 
 Open [the workspace](http://127.0.0.1:8000) and [interactive API documentation](http://127.0.0.1:8000/docs). Use **Unlock editing** and the key from your local `.env` to create or edit leads. The browser keeps this key only in memory; refreshing locks editing again.
 
-Initialization uses `CREATE TABLE IF NOT EXISTS` and never drops a table. `--seed` inserts the CSV only when the table is empty. Omit it when connecting an existing database. **Do not run the legacy `crm_setup.sql` or `CRM_SETUP copy.SQL` on a database you want to preserve: those V1 scripts drop `leads`.** Existing V1 tables are supported without adding unrelated entities. Invalid historical rows may need correction before an update can pass the V2 API rules.
+Initialization applies numbered SQL files from `backend/migrations` in one transaction and records them in `schema_migrations`. It never drops leads. `--seed` imports the CSV only into an empty table; `--seed-on-create` imports only when creating the table for the first time. Omit both flags for existing data. Invalid historical rows must be corrected before the integrity migration can succeed. **The archived V1 `crm_setup.sql` drops `leads`; do not use it on a database you want to preserve.**
 
 ### This Mac's prepared environment
 
@@ -65,7 +65,7 @@ Stop the web server with Ctrl-C. Stop this database with `/Library/PostgreSQL/17
 - Loading, empty, error, and read-only states; accessible form labels and keyboard-operable dialogs; responsive layouts.
 - Transactions, connection/statement timeouts, sanitized database errors, request logging, explicit CORS allowlist, and API documentation.
 
-Dates use the API host's current date for input validation and PostgreSQL's current date for queue calculations. Keep host/database time zones aligned in deployment. Set up a business timezone explicitly before using this across regions.
+Validation, database sessions, and follow-up calculations use UTC calendar dates. The frontend receives today's date from the API.
 
 ## API
 
@@ -73,7 +73,7 @@ Dates use the API host's current date for input validation and PostgreSQL's curr
 | --- | --- | --- |
 | GET | `/health` | Process liveness, independent of database |
 | GET | `/ready` | Database/table readiness |
-| GET | `/config` | Public demo flag only |
+| GET | `/config` | Public demo flag and current UTC date |
 | GET | `/session` | Validate access key |
 | GET | `/metadata` | Distinct agents and sources |
 | GET | `/leads` | `{items, total, limit, offset}`; default limit 25, maximum 100 |

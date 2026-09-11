@@ -14,7 +14,7 @@ from pydantic import ValidationError
 
 from backend.config import get_settings
 from backend.database import connection
-from backend.schemas import LeadCreate, LeadOut, LeadPage, LeadPatch, Stage, outcome_for
+from backend.schemas import LeadCreate, LeadOut, LeadPage, LeadPatch, Stage, outcome_for, today
 
 logger = logging.getLogger("crm")
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s %(message)s")
@@ -38,7 +38,7 @@ async def request_logging(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "same-origin"
     response.headers["X-Frame-Options"] = "DENY"
-    if request.url.path.startswith(("/leads", "/analytics", "/metadata")):
+    if request.url.path.startswith(("/leads", "/analytics", "/metadata", "/session", "/config")):
         response.headers["Cache-Control"] = "no-store"
     return response
 
@@ -83,7 +83,7 @@ def ready():
 
 @app.get("/config")
 def public_config():
-    return {"public_demo": get_settings().public_demo}
+    return {"public_demo": get_settings().public_demo, "today": today().isoformat()}
 
 
 @app.get("/session", dependencies=WRITE)

@@ -10,7 +10,7 @@
 
 ## One leads table
 
-**Decision:** preserve the V1 schema. **Why:** current CRUD does not require contacts, deals, or activities tables. **Alternatives:** normalize more entities immediately. **Tradeoff:** interaction history and multi-agent identity are deferred until requirements justify relationships and migrations.
+**Decision:** keep one business table, adding constraints and two ordering indexes through numbered SQL migrations. A separate table records migration history. **Why:** current CRUD does not require contacts, deals, or activities tables. **Tradeoff:** interaction history and multi-agent identity remain future work.
 
 ## PostgreSQL integration tests
 

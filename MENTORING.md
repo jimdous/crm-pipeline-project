@@ -55,7 +55,7 @@ No independent mastery claims earned yet. Implementation assistance must be disc
 - Preserved the V1 dashboard as a historical artifact. CSV chosen explicitly as synthetic seed because V1 snapshots differ.
 - Created isolated local development and test databases; original V1 database was not modified.
 - Added shared-key access control, environment configuration, transaction handling, request logging, tests, CI definition, and deployment configuration.
-- PostgreSQL API suite: 31 passing tests. Browser verified live reads, search, create, edit, persistence across reload, and relocking on reload.
+- Initial PostgreSQL API suite: 31 passing tests; the completion audit expanded it to 49 passing tests. Browser verified live reads, search, create, edit, persistence across reload, and relocking on reload. Current evidence is in docs/VERIFICATION.md.
 - Public deployment still needs hosting account access. Role-based multi-user authentication and the later business/AI roadmap are not implemented.
 - No V2 release yet: deployment and Jim's architecture explanation remain outstanding.
 - Learning Record remains unchanged: Jim has not yet demonstrated these concepts independently.

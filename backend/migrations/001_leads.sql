@@ -1,4 +1,4 @@
--- Non-destructive V2 initialization. Existing tables and data are retained.
+-- Adopt the V1 leads table without replacing existing data.
 CREATE TABLE IF NOT EXISTS leads (
     lead_id          SERIAL PRIMARY KEY,
     first_name       VARCHAR(50)  NOT NULL,
@@ -16,4 +16,3 @@ CREATE TABLE IF NOT EXISTS leads (
     estimated_deal_value NUMERIC(12,2),
     outcome          VARCHAR(20)
 );
-

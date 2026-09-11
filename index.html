@@ -20,7 +20,7 @@
     <button data-view="leads"><span aria-hidden="true">▤</span> All leads</button>
     <button data-view="followup"><span aria-hidden="true">◷</span> Follow-up queue</button>
   </nav>
-  <div class="sidebar-bottom"><strong>Built by Jim Ferdous</strong><p>Real estate CRM<br>Engineering portfolio · 2026</p><a href="https://github.com/jimdous/crm-pipeline-project" target="_blank" rel="noopener">View project ↗</a></div>
+  <div class="sidebar-bottom"><strong>Jim Ferdous · Portfolio</strong><p>Real estate CRM<br>Engineering project · 2026</p><a href="https://github.com/jimdous/crm-pipeline-project" target="_blank" rel="noopener">View project ↗</a></div>
 </aside>
 <main class="main">
   <header class="topbar"><div><p class="eyebrow">Real estate · Lead workspace</p><strong id="today"></strong></div><div class="top-actions"><span id="connection" class="connection" role="status">Connecting…</span><button id="refresh" class="quiet">↻ Refresh</button><button id="access-button">Unlock editing</button></div></header>
@@ -38,13 +38,14 @@
       <section class="card"><div class="card-head"><h2>Make time for follow-ups</h2><span>Open leads only</span></div><p class="subtitle" id="followup-summary">Loading…</p><p class="subtitle" style="font-size:12px;margin:16px 0 20px">The queue includes flagged leads, leads never contacted, and leads with no contact in at least 7 days. Oldest contact comes first.</p><button data-view="followup">Open follow-up queue →</button></section>
     </div>
     <section class="card table-card" aria-labelledby="table-heading">
-      <div class="table-title"><h2 id="table-heading">Lead directory</h2><span class="kpi-label" id="lead-count"></span></div>
+      <div class="table-title"><h2 id="table-heading">Lead directory</h2><span class="kpi-label" id="lead-count" aria-live="polite"></span></div>
       <form class="filters" id="filters" role="search">
         <label class="sr-only" for="search">Search leads by name or email</label><input type="search" id="search" placeholder="Search name or email…" maxlength="100">
         <label class="sr-only" for="stage-filter">Filter by stage</label><select id="stage-filter"><option value="">All stages</option></select>
         <label class="sr-only" for="agent-filter">Filter by agent</label><select id="agent-filter"><option value="">All agents</option></select>
         <label class="sr-only" for="source-filter">Filter by source</label><select id="source-filter"><option value="">All sources</option></select>
         <label class="sr-only" for="sort">Sort leads</label><select id="sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="value">Highest value</option><option value="name">Name A–Z</option><option value="contact">Oldest contact</option></select>
+        <button type="button" id="clear-filters" class="quiet">Clear filters</button>
       </form>
       <div class="table-scroll"><table><thead><tr><th scope="col">Lead</th><th scope="col">Stage</th><th scope="col">Deal value</th><th scope="col">Source</th><th scope="col">Agent</th><th scope="col">Last contact</th><th scope="col">Follow-up</th></tr></thead><tbody id="lead-rows"><tr><td colspan="7" class="empty">Loading leads…</td></tr></tbody></table></div>
       <div class="pagination"><span id="page-info">Loading…</span><div><button id="previous" disabled>← Previous</button><button id="next" disabled>Next →</button></div></div>
@@ -75,7 +76,7 @@
   </form>
 </dialog>
 <dialog id="access-dialog" aria-labelledby="access-title"><form id="access-form"><div class="dialog-head"><h2 id="access-title">Workspace access</h2><button type="button" data-close="access-dialog" aria-label="Close access form">✕</button></div><div class="form-body"><p class="subtitle">Enter the server access key to manage leads. It stays in memory until you refresh or lock the workspace.</p><label class="field" style="margin-top:20px">Access key<input id="access-key" type="password" required autocomplete="off"></label><p class="form-error" id="access-error" role="alert"></p></div><div class="form-footer"><button type="button" data-close="access-dialog">Cancel</button><button class="primary" id="unlock" type="submit">Unlock workspace</button></div></form></dialog>
-<dialog id="delete-dialog" aria-labelledby="delete-title"><div class="dialog-head"><h2 id="delete-title">Delete this lead?</h2></div><div class="form-body"><p id="delete-description"></p><p class="subtitle">This permanently removes the lead from PostgreSQL.</p><p class="form-error" id="delete-error" role="alert"></p></div><div class="form-footer"><button data-close="delete-dialog">Keep lead</button><button id="confirm-delete" class="danger">Delete permanently</button></div></dialog>
+<dialog id="delete-dialog" aria-labelledby="delete-title"><div class="dialog-head"><h2 id="delete-title">Delete this lead?</h2></div><div class="form-body"><p id="delete-description"></p><p class="subtitle">This permanently removes the lead from your workspace.</p><p class="form-error" id="delete-error" role="alert"></p></div><div class="form-footer"><button data-close="delete-dialog">Keep lead</button><button id="confirm-delete" class="danger">Delete permanently</button></div></dialog>
 <datalist id="agent-options"></datalist><datalist id="source-options"></datalist>
 <div id="toast" class="toast" role="status" hidden></div>
 </body>

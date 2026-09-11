@@ -13,7 +13,9 @@ def connection():
         get_settings().database_url,
         row_factory=dict_row,
         connect_timeout=5,
-        options="-c statement_timeout=10000",
     ) as conn:
+        # Preserve connection-string options (including test schema selection).
+        conn.execute("SET statement_timeout = 10000")
+        conn.execute("SET TIME ZONE 'UTC'")
+        conn.commit()
         yield conn
-

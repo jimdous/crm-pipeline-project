@@ -2,7 +2,7 @@
 
 ## Executed successfully
 
-- 31 API integration tests passed against PostgreSQL 17 in a separate test database. Each test used an isolated schema.
+- 49 tests passed, including PostgreSQL 17 integration tests in isolated schemas and four database-independent tests. The integration suite uses the production connection function and covers migration integrity, seed behavior after deletion, sorting, and unauthorized writes.
 - Python modules compiled, JavaScript passed `node --check`, dependencies passed `pip check`, and the diff passed whitespace checks.
 - Browser loaded all 40 synthetic leads through the API and rendered SQL-backed metrics.
 - Search for Maria returned one matching lead; opening it without a key showed read-only fields.
