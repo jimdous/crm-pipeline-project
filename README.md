@@ -2,11 +2,19 @@
 
 A real estate lead workspace built with vanilla JavaScript, FastAPI, and PostgreSQL.
 
+Open the workspace to see which leads need attention, review their contact details and pipeline stage, and keep records current.
+
 [Public demo](https://crm-pipeline-v2.onrender.com/) · [API documentation](https://crm-pipeline-v2.onrender.com/docs) · [Verification](docs/VERIFICATION.md)
 
 The demo uses synthetic data. Visitors can browse; editing requires a private access key. Render's free service may take about a minute to wake. Its free database expires 30 days after creation, so the hosting plan must change before then to keep the demo available.
 
 ## What it does
+
+![Pipeline CRM desktop overview](screenshots/v2-overview.jpg)
+
+Screenshot: local V2 redesign. Public rollout status is recorded in [verification](docs/VERIFICATION.md).
+
+The interface puts follow-ups first, with a searchable lead directory, contact links, grouped editing forms, and an expandable pipeline summary. Small screens use labeled lead cards.
 
 - Create, edit, and delete leads with persistent database storage.
 - Search names and emails; filter by stage, agent, or source; sort and paginate.
@@ -76,3 +84,5 @@ See [verification evidence](docs/VERIFICATION.md) for the current deployment che
 The canonical CSV contains 40 synthetic leads, $17,673,000 in modeled property value, 9 won and 3 lost leads. Values are not earned revenue or real transactions. Historical V1 snapshots differ from this CSV.
 
 This is a single-workspace portfolio app. A shared key provides no user identity, roles, or tenant isolation. Deletes are permanent; same-field concurrent edits use last-writer-wins. Database connections open per request. Before real team use, add identity-based authorization, audit history, backups with restoration checks, and concurrency/load testing. No AI or predictive scoring is used.
+
+Future hypotheses are contact history, tasks/next actions, and property associations, subject to agent feedback. Live MLS integration is deferred and would require approved provider access and licensing. None of these features is implemented in V2.

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="A connected real estate lead workspace built with JavaScript, FastAPI, and PostgreSQL.">
-<title>CRM Pipeline · Workspace</title>
+<meta name="description" content="Manage real estate leads, track your pipeline, and find who needs a follow-up.">
+<title>Pipeline CRM</title>
 <link rel="icon" href="static/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="static/styles.css">
 <script src="static/config.js" defer></script>
@@ -13,69 +13,71 @@
 <body>
 <div class="shell">
 <aside class="sidebar">
-  <div class="brand"><span class="mark" aria-hidden="true">▥</span> Pipeline <small>V2</small></div>
-  <p class="workspace-label">Your workspace</p>
+  <a class="brand" href="/" aria-label="Pipeline home"><span class="mark" aria-hidden="true">P</span> Pipeline</a>
   <nav class="nav" aria-label="Workspace">
-    <button data-view="overview" class="active" aria-current="page"><span aria-hidden="true">◫</span> Overview</button>
-    <button data-view="leads"><span aria-hidden="true">▤</span> All leads</button>
-    <button data-view="followup"><span aria-hidden="true">◷</span> Follow-up queue</button>
+    <button data-view="overview" class="active" aria-current="page">Overview</button>
+    <button data-view="leads">Leads</button>
+    <button data-view="followup">Follow-ups</button>
   </nav>
-  <div class="sidebar-bottom"><strong>Jim Ferdous · Portfolio</strong><p>Real estate CRM<br>Engineering project · 2026</p><a href="https://github.com/jimdous/crm-pipeline-project" target="_blank" rel="noopener">View project ↗</a></div>
+  <div class="sidebar-bottom">Real estate workspace</div>
 </aside>
 <main class="main">
-  <header class="topbar"><div><p class="eyebrow">Real estate · Lead workspace</p><strong id="today"></strong></div><div class="top-actions"><span id="connection" class="connection" role="status">Connecting…</span><button id="refresh" class="quiet">↻ Refresh</button><button id="access-button">Unlock editing</button></div></header>
-  <div class="heading"><div><p class="eyebrow">Make the next connection</p><h1 id="view-title">Pipeline overview</h1><p class="subtitle" id="view-subtitle">A clear view of your leads, opportunities, and next steps.</p></div><button class="primary" id="new-lead" disabled>+ New lead</button></div>
-  <div id="demo-notice" class="notice" hidden>Portfolio demo · All lead records are synthetic. Values represent modeled property transactions, not brokerage revenue. Editing requires an access key.</div>
+  <header class="topbar"><span id="today"></span><div class="top-actions"><span id="connection" class="connection" role="status">Connecting…</span><button id="refresh" class="quiet">Refresh</button><button id="access-button">Unlock editing</button></div></header>
+  <div class="heading"><div><h1 id="view-title">Overview</h1><p class="subtitle" id="view-subtitle">Start with the people who need your attention.</p></div><button class="primary" id="new-lead" disabled>New lead</button></div>
+  <div id="demo-notice" class="demo-note" hidden>Demo workspace · Synthetic data · Read-only until editing is unlocked</div>
   <div id="error" class="notice error" role="alert" hidden></div>
   <div id="dashboard">
     <section class="kpis" aria-label="Pipeline metrics" id="kpis"><div class="card">Loading pipeline…</div></section>
-    <div class="grid" id="overview-charts">
-      <section class="card"><div class="card-head"><h2>Pipeline by stage</h2><span>All leads · live counts</span></div><div id="stages"></div></section>
-      <section class="card"><div class="card-head"><h2>Agent performance</h2><span>Closed property value</span></div><div id="agents"></div></section>
-    </div>
-    <div class="grid" id="overview-secondary">
-      <section class="card"><div class="card-head"><h2>Where leads come from</h2><span>All sources</span></div><div id="sources"></div></section>
-      <section class="card"><div class="card-head"><h2>Make time for follow-ups</h2><span>Open leads only</span></div><p class="subtitle" id="followup-summary">Loading…</p><p class="subtitle" style="font-size:12px;margin:16px 0 20px">The queue includes flagged leads, leads never contacted, and leads with no contact in at least 7 days. Oldest contact comes first.</p><button data-view="followup">Open follow-up queue →</button></section>
-    </div>
+    <section id="overview-intro" class="attention-heading"><div><h2>Needs attention</h2><p id="followup-summary" class="subtitle">Loading follow-ups…</p></div><button data-view="followup" class="quiet">View all follow-ups</button></section>
     <section class="card table-card" aria-labelledby="table-heading">
-      <div class="table-title"><h2 id="table-heading">Lead directory</h2><span class="kpi-label" id="lead-count" aria-live="polite"></span></div>
+      <div class="table-title"><h2 id="table-heading">Follow-up list</h2><span class="kpi-label" id="lead-count" aria-live="polite"></span></div>
       <form class="filters" id="filters" role="search">
-        <label class="sr-only" for="search">Search leads by name or email</label><input type="search" id="search" placeholder="Search name or email…" maxlength="100">
+        <label class="sr-only" for="search">Search leads by name or email</label><input type="search" id="search" placeholder="Search name or email" maxlength="100">
         <label class="sr-only" for="stage-filter">Filter by stage</label><select id="stage-filter"><option value="">All stages</option></select>
         <label class="sr-only" for="agent-filter">Filter by agent</label><select id="agent-filter"><option value="">All agents</option></select>
         <label class="sr-only" for="source-filter">Filter by source</label><select id="source-filter"><option value="">All sources</option></select>
-        <label class="sr-only" for="sort">Sort leads</label><select id="sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="value">Highest value</option><option value="name">Name A–Z</option><option value="contact">Oldest contact</option></select>
-        <button type="button" id="clear-filters" class="quiet">Clear filters</button>
+        <label class="sr-only" for="sort">Sort leads</label><select id="sort"><option value="contact">Oldest contact</option><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="value">Highest value</option><option value="name">Last name A–Z</option></select>
+        <button type="button" id="clear-filters" class="quiet">Clear</button>
       </form>
-      <div class="table-scroll"><table><thead><tr><th scope="col">Lead</th><th scope="col">Stage</th><th scope="col">Deal value</th><th scope="col">Source</th><th scope="col">Agent</th><th scope="col">Last contact</th><th scope="col">Follow-up</th></tr></thead><tbody id="lead-rows"><tr><td colspan="7" class="empty">Loading leads…</td></tr></tbody></table></div>
-      <div class="pagination"><span id="page-info">Loading…</span><div><button id="previous" disabled>← Previous</button><button id="next" disabled>Next →</button></div></div>
+      <div class="table-scroll"><table><thead><tr><th scope="col">Lead</th><th scope="col">Stage</th><th scope="col">Contact</th><th scope="col">Interest</th><th scope="col">Value</th><th scope="col">Agent</th><th scope="col">Last contact</th><th scope="col">Follow-up</th></tr></thead><tbody id="lead-rows"><tr><td colspan="8" class="empty">Loading leads…</td></tr></tbody></table></div>
+      <div class="pagination"><span id="page-info">Loading…</span><div><button id="previous" disabled>Previous</button><button id="next" disabled>Next</button></div></div>
     </section>
+    <details id="overview-charts" class="analytics">
+      <summary>Pipeline insights <span>Stages, sources and agent results</span></summary>
+      <div class="analytics-grid" id="overview-secondary">
+        <section class="card"><div class="card-head"><h2>Pipeline by stage</h2><span>All leads</span></div><div id="stages"></div></section>
+        <section class="card"><div class="card-head"><h2>Lead sources</h2><span>All leads</span></div><div id="sources"></div></section>
+        <section class="card"><div class="card-head"><h2>Agent results</h2><span>Won value · close rate</span></div><div id="agents"></div></section>
+      </div>
+    </details>
   </div>
-  <footer class="footer"><span id="updated">Waiting for database connection</span><span>JavaScript → FastAPI → PostgreSQL · <a id="api-docs" href="/docs" target="_blank" rel="noopener">API docs ↗</a></span></footer>
+  <footer class="footer"><span id="updated">Waiting for connection</span></footer>
 </main>
 </div>
 <dialog id="lead-dialog" aria-labelledby="dialog-title">
   <form id="lead-form">
     <div class="dialog-head"><h2 id="dialog-title">New lead</h2><button type="button" data-close="lead-dialog" aria-label="Close lead form">✕</button></div>
-    <div class="form-body"><div class="form-grid">
+    <div class="form-body"><fieldset><legend>Contact</legend><div class="form-grid">
       <label class="field">First name *<input name="first_name" required maxlength="50" autocomplete="given-name"></label>
       <label class="field">Last name *<input name="last_name" required maxlength="50" autocomplete="family-name"></label>
       <label class="field">Email<input name="email" type="email" maxlength="100" autocomplete="email"></label>
       <label class="field">Phone<input name="phone" type="tel" maxlength="20" autocomplete="tel"></label>
+    </div></fieldset><fieldset><legend>Pipeline</legend><div class="form-grid">
       <label class="field">Stage<select name="stage" id="form-stage" required></select></label>
       <label class="field">Assigned agent<input name="assigned_agent" list="agent-options" maxlength="100"></label>
       <label class="field">Lead source<input name="lead_source" list="source-options" maxlength="50"></label>
-      <label class="field">Property interest<input name="property_interest" placeholder="House, Condo, Rental…" maxlength="50"></label>
-      <label class="field">Budget ($)<input name="budget" type="number" min="0.01" max="9999999999.99" step="0.01"></label>
-      <label class="field">Estimated deal value ($)<input name="estimated_deal_value" type="number" min="0.01" max="9999999999.99" step="0.01"></label>
       <label class="field">Created date *<input name="created_date" type="date" required></label>
       <label class="field">Last contact date<input name="last_contact_date" type="date"></label>
       <label class="check full"><input type="checkbox" name="follow_up_needed"> Flag for follow-up</label>
-    </div><p class="detail-meta" id="lead-meta">Outcome follows stage automatically. * Required fields.</p><p id="form-error" class="form-error" role="alert"></p></div>
+    </div></fieldset><fieldset><legend>Property</legend><div class="form-grid">
+      <label class="field">Property interest<input name="property_interest" placeholder="House, Condo, Rental…" maxlength="50"></label>
+      <label class="field">Budget ($)<input name="budget" type="number" min="0.01" max="9999999999.99" step="0.01"></label>
+      <label class="field">Estimated deal value ($)<input name="estimated_deal_value" type="number" min="0.01" max="9999999999.99" step="0.01"></label>
+    </div></fieldset><p class="detail-meta" id="lead-meta">* Required fields.</p><p id="form-error" class="form-error" role="alert"></p></div>
     <div class="form-footer"><button id="delete-lead" type="button" class="quiet danger" hidden>Delete lead</button><div><button type="button" data-close="lead-dialog">Cancel</button><button id="save-lead" type="submit" class="primary">Save lead</button></div></div>
   </form>
 </dialog>
-<dialog id="access-dialog" aria-labelledby="access-title"><form id="access-form"><div class="dialog-head"><h2 id="access-title">Workspace access</h2><button type="button" data-close="access-dialog" aria-label="Close access form">✕</button></div><div class="form-body"><p class="subtitle">Enter the server access key to manage leads. It stays in memory until you refresh or lock the workspace.</p><label class="field" style="margin-top:20px">Access key<input id="access-key" type="password" required autocomplete="off"></label><p class="form-error" id="access-error" role="alert"></p></div><div class="form-footer"><button type="button" data-close="access-dialog">Cancel</button><button class="primary" id="unlock" type="submit">Unlock workspace</button></div></form></dialog>
+<dialog id="access-dialog" aria-labelledby="access-title"><form id="access-form"><div class="dialog-head"><h2 id="access-title">Workspace access</h2><button type="button" data-close="access-dialog" aria-label="Close access form">✕</button></div><div class="form-body"><p class="subtitle">Enter your workspace access key to manage leads. Editing locks again when you reload or lock the workspace.</p><label class="field" style="margin-top:20px">Access key<input id="access-key" type="password" required autocomplete="off"></label><p class="form-error" id="access-error" role="alert"></p></div><div class="form-footer"><button type="button" data-close="access-dialog">Cancel</button><button class="primary" id="unlock" type="submit">Unlock workspace</button></div></form></dialog>
 <dialog id="delete-dialog" aria-labelledby="delete-title"><div class="dialog-head"><h2 id="delete-title">Delete this lead?</h2></div><div class="form-body"><p id="delete-description"></p><p class="subtitle">This permanently removes the lead from your workspace.</p><p class="form-error" id="delete-error" role="alert"></p></div><div class="form-footer"><button data-close="delete-dialog">Keep lead</button><button id="confirm-delete" class="danger">Delete permanently</button></div></dialog>
 <datalist id="agent-options"></datalist><datalist id="source-options"></datalist>
 <div id="toast" class="toast" role="status" hidden></div>

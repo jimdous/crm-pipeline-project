@@ -2,9 +2,8 @@
 
 const $ = (id) => document.getElementById(id);
 const STAGES = ["New Lead", "Contacted", "Qualified", "Showing Scheduled", "Negotiating", "Closed Won", "Closed Lost"];
-const COLORS = ["#6384b0", "#639fff", "#57dcaf", "#55d1dc", "#ffc46c", "#b395ff", "#ff9191"];
 const base = (window.CRM_API_BASE || "").replace(/\/$/, "");
-const state = {key: "", view: "overview", offset: 0, total: 0, limit: 10, editing: null, publicDemo: false, ready: false, saving: false, today: null, request: 0, refresh: 0, controller: null};
+const state = {key: "", view: "overview", offset: 0, total: 0, limit: 10, editing: null, publicDemo: false, ready: false, loaded: false, saving: false, today: null, request: 0, refresh: 0, controller: null};
 const money = (value) => new Intl.NumberFormat("en-US", {style: "currency", currency: "USD", maximumFractionDigits: 2}).format(Number(value || 0));
 const compactMoney = (value) => new Intl.NumberFormat("en-US", {style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 2}).format(Number(value || 0));
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
@@ -73,23 +72,22 @@ function renderAnalytics(data) {
   const closed = s.won_leads + s.lost_leads;
   const rate = closed ? `${Math.round(s.won_leads / closed * 100)}% of closed leads won` : "No closed leads yet";
   $("kpis").innerHTML = [
-    ["Total leads", s.total_leads, `${s.open_leads} active opportunities`, "blue"],
-    ["Active pipeline", compactMoney(s.pipeline_value), "Estimated open property value", "green"],
-    ["Closed won value", compactMoney(s.won_value), rate, "blue"],
-    ["Follow-ups due", s.follow_ups, "Flagged, uncontacted, or stale", "amber"],
+    ["Follow-ups due", s.follow_ups, "Open leads requiring attention", ""],
+    ["Open leads", s.open_leads, `${s.total_leads} leads in your workspace`, ""],
+    ["Active pipeline", compactMoney(s.pipeline_value), "Estimated open property value", ""],
+    ["Closed won", compactMoney(s.won_value), `${s.won_leads} won · ${rate}`, ""],
   ].map(([label, value, sub, color]) => `<div class="card"><div class="kpi-label">${label}</div><div class="kpi-value ${color}">${esc(value)}</div><div class="kpi-sub">${esc(sub)}</div></div>`).join("");
   const max = Math.max(1, ...data.stages.map((s) => s.count));
-  $("stages").innerHTML = STAGES.map((stage, i) => {
+  $("stages").innerHTML = STAGES.map((stage) => {
     const count = data.stages.find((s) => s.stage === stage)?.count || 0;
-    return `<div class="bar-row"><span class="bar-label">${stage}</span><div class="bar-track"><div class="bar-fill" style="width:${count / max * 100}%;background:${COLORS[i]}"></div></div><span class="bar-number">${count}</span></div>`;
+    return `<div class="bar-row"><span class="bar-label">${stage}</span><div class="bar-track"><div class="bar-fill" style="width:${count / max * 100}%"></div></div><span class="bar-number">${count}</span></div>`;
   }).join("");
   $("agents").innerHTML = data.agents.length ? data.agents.map((a) => {
-    const initials = a.agent.split(/\s+/).map((x) => x[0]).slice(0,2).join("");
     const rate = a.won + a.lost ? `${Math.round(a.won / (a.won + a.lost) * 100)}% close rate` : "No closed leads";
-    return `<div class="agent-row"><div class="agent-person"><div class="avatar">${esc(initials)}</div><div><strong>${esc(a.agent)}</strong><small>${a.count} leads · ${a.won} won</small></div></div><div class="agent-value green">${compactMoney(a.won_value)}<small>${rate}</small></div></div>`;
+    return `<div class="agent-row"><div class="agent-person"><div><strong>${esc(a.agent)}</strong><small>${a.count} ${a.count === 1 ? "lead" : "leads"} · ${a.won} won</small></div></div><div class="agent-value green">${compactMoney(a.won_value)}<small>${rate}</small></div></div>`;
   }).join("") : '<p class="subtitle">No agents yet. Create your first lead.</p>';
   const maxSource = Math.max(1, ...data.sources.map((s) => s.count));
-  $("sources").innerHTML = data.sources.length ? data.sources.map((s) => `<div class="bar-row"><span class="bar-label">${esc(s.source)}</span><div class="bar-track"><div class="bar-fill" style="width:${s.count / maxSource * 100}%;background:var(--green)"></div></div><span class="bar-number">${s.count}</span></div>`).join("") : '<p class="subtitle">Source insights appear when leads are added.</p>';
+  $("sources").innerHTML = data.sources.length ? data.sources.map((s) => `<div class="bar-row"><span class="bar-label">${esc(s.source)}</span><div class="bar-track"><div class="bar-fill" style="width:${s.count / maxSource * 100}%"></div></div><span class="bar-number">${s.count}</span></div>`).join("") : '<p class="subtitle">Source insights appear when leads are added.</p>';
   $("followup-summary").textContent = s.follow_ups ? `${s.follow_ups} open ${s.follow_ups === 1 ? "lead needs" : "leads need"} your attention.` : "You’re all caught up. No open leads need a follow-up.";
 }
 
@@ -106,9 +104,9 @@ function renderMetadata(meta) {
 function followupLabel(lead) {
   if (lead.outcome !== "Open") return "—";
   if (lead.follow_up_needed) return "Flagged";
-  if (!lead.last_contact_date) return "Not contacted";
+  if (!lead.last_contact_date) return "Never contacted";
   const days = Math.round((new Date(localDate()+"T00:00:00Z") - new Date(lead.last_contact_date+"T00:00:00Z")) / 86400000);
-  return days >= 7 ? `${days} days ago` : "Up to date";
+  return days >= 7 ? `${days} days since contact` : "Up to date";
 }
 
 function renderRows(page) {
@@ -117,8 +115,12 @@ function renderRows(page) {
   $("lead-count").textContent = `${page.total} matching ${page.total === 1 ? "lead" : "leads"}`;
   $("lead-rows").innerHTML = page.items.length ? page.items.map((l) => {
     const badge = l.stage === "Closed Won" ? "won" : l.stage === "Closed Lost" ? "lost" : l.stage === "Negotiating" ? "negotiating" : "";
-    return `<tr><td><button class="name-button" data-lead="${l.lead_id}">${esc(l.first_name)} ${esc(l.last_name)}</button><small>${esc(l.email || l.property_interest || "No email added")}</small></td><td><span class="badge ${badge}">${esc(l.stage || "Unspecified")}</span></td><td>${l.estimated_deal_value === null ? "—" : money(l.estimated_deal_value)}</td><td>${esc(l.lead_source || "Unknown")}</td><td>${esc(l.assigned_agent || "Unassigned")}</td><td>${dateLabel(l.last_contact_date)}</td><td>${esc(followupLabel(l))}</td></tr>`;
-  }).join("") : '<tr><td colspan="7" class="empty">No leads match this view. Try clearing your filters or create a new lead.</td></tr>';
+    const contacts = [
+      l.email ? `<a class="contact-line" href="mailto:${encodeURIComponent(l.email)}">${esc(l.email)}</a>` : "",
+      l.phone ? `<a class="contact-line" href="tel:${encodeURIComponent(l.phone)}">${esc(l.phone)}</a>` : "",
+    ].filter(Boolean).join("") || '<span class="subtitle">No contact added</span>';
+    return `<tr><td data-label="Lead"><button class="name-button" data-lead="${l.lead_id}">${esc(l.first_name)} ${esc(l.last_name)}</button><small>${esc(l.lead_source || "No source")}</small></td><td data-label="Stage"><span class="badge ${badge}">${esc(l.stage)}</span></td><td data-label="Contact">${contacts}</td><td data-label="Interest">${esc(l.property_interest || "—")}</td><td data-label="Value">${l.estimated_deal_value === null ? "—" : money(l.estimated_deal_value)}</td><td data-label="Agent">${esc(l.assigned_agent || "Unassigned")}</td><td data-label="Last contact">${dateLabel(l.last_contact_date)}</td><td data-label="Follow-up" class="due-reason">${esc(followupLabel(l))}</td></tr>`;
+  }).join("") : '<tr><td colspan="8" class="empty">No leads match this view. Clear filters to broaden the list.</td></tr>';
   $("page-info").textContent = page.total ? `${page.offset + 1}–${Math.min(page.offset + page.items.length, page.total)} of ${page.total}` : "0 leads";
   $("previous").disabled = !state.offset;
   $("next").disabled = state.offset + state.limit >= page.total;
@@ -131,7 +133,7 @@ async function loadLeads() {
   state.controller = new AbortController();
   const params = new URLSearchParams({limit: state.limit, offset: state.offset, sort: $("sort").value});
   for (const [key, id] of [["q", "search"], ["stage", "stage-filter"], ["agent", "agent-filter"], ["source", "source-filter"]]) if ($(id).value) params.set(key, $(id).value);
-  if (state.view === "followup") params.set("follow_up", "true");
+  if (state.view !== "leads") params.set("follow_up", "true");
   $("lead-rows").classList.add("loading");
   $("lead-rows").setAttribute("aria-busy", "true");
   $("previous").disabled = $("next").disabled = true;
@@ -146,7 +148,7 @@ async function loadLeads() {
     showError("");
   } catch (error) {
     if (request === state.request && error.name !== "AbortError") {
-      $("lead-rows").innerHTML = '<tr><td colspan="7" class="empty">Leads could not be loaded. Check access and refresh to retry.</td></tr>';
+      $("lead-rows").innerHTML = '<tr><td colspan="8" class="empty">Leads could not be loaded. Check access and refresh to retry.</td></tr>';
       $("page-info").textContent = "Unavailable";
       $("previous").disabled = $("next").disabled = true;
       throw error;
@@ -170,29 +172,39 @@ async function refresh() {
     $("dashboard").hidden = false;
     renderAnalytics(analytics);
     renderMetadata(metadata);
+    state.loaded = true;
     await loadLeads();
     if (version !== state.refresh) return;
     $("connection").textContent = "Database connected";
     $("connection").classList.add("online");
-    $("updated").textContent = `Updated ${new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})} · Metrics cover all leads; filters apply to the directory.`;
+    $("updated").textContent = `Updated ${new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})} · All pipeline metrics reflect the full workspace.`;
   } catch (error) {
     if (version !== state.refresh) { showError(error.message); return; }
     showError(error.message);
     $("connection").textContent = "Connection needs attention";
     $("connection").classList.remove("online");
     $("updated").textContent = "Refresh failed · previously loaded data may be out of date.";
+    if (!state.loaded) {
+      $("kpis").innerHTML = '<div class="card">Pipeline metrics are unavailable.</div>';
+      $("followup-summary").textContent = "Refresh to load follow-ups.";
+      $("lead-rows").innerHTML = '<tr><td colspan="8" class="empty">Unable to load leads. Refresh to try again.</td></tr>';
+      $("page-info").textContent = "Unavailable";
+      $("updated").textContent = "Unable to load workspace data.";
+    }
   } finally { if (version === state.refresh) $("refresh").disabled = false; }
 }
 
 function switchView(view) {
   state.view = view;
   state.offset = 0;
+  clearTimeout(searchTimer);
   $("search").value = $("stage-filter").value = $("agent-filter").value = $("source-filter").value = "";
-  $("sort").value = view === "followup" ? "contact" : "newest";
-  const titles = {overview: ["Pipeline overview", "A clear view of your leads, opportunities, and next steps."], leads: ["Your lead directory", "Every relationship in one place. Find a lead and keep it moving."], followup: ["Who needs a follow-up?", "Open leads that are flagged, never contacted, or quiet for at least 7 days."]};
+  $("sort").value = view === "leads" ? "newest" : "contact";
+  const titles = {overview: ["Overview", "Start with the people who need your attention."], leads: ["Leads", "Find a lead, review the details, and keep the relationship moving."], followup: ["Follow-ups", "Flagged, never contacted, or at least 7 days since contact."]};
   $("view-title").textContent = titles[view][0];
   $("view-subtitle").textContent = titles[view][1];
-  $("table-heading").textContent = view === "followup" ? "Follow-up queue" : "Lead directory";
+  $("table-heading").textContent = view === "leads" ? "Lead directory" : "Follow-up list";
+  $("overview-intro").hidden = $("kpis").hidden = view !== "overview";
   $("overview-charts").hidden = $("overview-secondary").hidden = view !== "overview";
   document.querySelectorAll(".nav [data-view]").forEach((button) => { button.classList.toggle("active", button.dataset.view === view); if (button.dataset.view === view) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current"); });
   loadLeads().catch((e) => showError(e.message));
@@ -216,7 +228,7 @@ async function openLead(id = null) {
     }
     fields.created_date.max = fields.last_contact_date.max = localDate();
     $("dialog-title").textContent = lead ? `${state.key ? "Edit" : "View"} lead` : "New lead";
-    $("lead-meta").textContent = lead ? `Lead #${lead.lead_id} · Outcome: ${lead.outcome || "Unspecified"}. Outcome follows stage automatically.` : "Outcome follows stage automatically. * Required fields.";
+    $("lead-meta").textContent = lead ? `Created ${dateLabel(lead.created_date)} · ${lead.outcome === "Open" ? "Open opportunity" : lead.outcome === "Won" ? "Closed won" : "Closed lost"}` : "* Required fields.";
     $("delete-lead").hidden = !lead || !state.key;
     $("save-lead").hidden = !state.key;
     $("lead-dialog").showModal();
@@ -313,7 +325,6 @@ for (const id of ["stage-filter", "agent-filter", "source-filter", "sort"]) $(id
 $("stage-filter").innerHTML += STAGES.map((s) => `<option>${s}</option>`).join("");
 $("form-stage").innerHTML = STAGES.map((s) => `<option>${s}</option>`).join("");
 $("today").textContent = new Date().toLocaleDateString("en-US", {weekday: "long", month: "long", day: "numeric", year: "numeric"});
-$("api-docs").href = base + "/docs";
 
 async function start() {
   $("refresh").disabled = true;

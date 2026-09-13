@@ -21,6 +21,8 @@ The free database expires 30 days after creation. The free web service sleeps af
 
 ## Separate frontend hosting (optional)
 
+The existing GitHub Pages configuration publishes `main` from the repository root. V2's `static/config.js` forwards that historical project address to Render once merged; Pages does not host the API. The V1 archive remains at `docs/v1-dashboard.html`. No separate-origin architecture was added for Pages.
+
 GitHub Pages can serve HTML/CSS/JavaScript but cannot run FastAPI or PostgreSQL. First deploy the API. Then set `window.CRM_API_BASE` in `static/config.js` to the API's HTTPS origin, and configure `CORS_ORIGINS` on the API, for example `["https://jimdous.github.io"]`. An origin contains no path or trailing slash. Deploy only after checking cross-origin reads and authenticated writes. No credentials belong in `config.js`.
 
 Reference: [FastAPI CORS documentation](https://fastapi.tiangolo.com/tutorial/cors/).

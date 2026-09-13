@@ -1,4 +1,26 @@
-# V2 verification — September 12, 2026
+# V2 verification
+
+## September 13 — local redesign verification
+
+The minimalist redesign is implemented locally. Public rollout, public cleanup, and release verification are still pending; the older public checks below apply to the earlier interface.
+
+- Full redesigned suite: **49 passed, 2 warnings in 6.31 seconds** against PostgreSQL 17. The smoke assertion was updated for the new page title. Initial connection failures came from the stopped local cluster; starting it resolved them. No new tests were added merely to increase the count.
+- Local disposable #42, Redesign Verification, was edited through the UI to Closed Won. A direct read confirmed outcome Won and exact value `123456.78`. Reload retained the record and relocked editing.
+- After unlocking again, the mobile delete confirmation identified the correct local record. Deletion succeeded; GET #42 returned 404. Analytics returned 40 leads, 28 open, 9 won, 3 lost, 28 follow-ups, active value $11,768,000 and won value $5,080,000.
+- Desktop search, combined Closed Won/Alex Chen/Zillow filters, empty search, highest-value ordering, read-only details, invalid-key rejection and valid-key access passed. Pagination was exercised; a complete boundary pass remains outstanding.
+- At 390×844, Overview had a 390px document width with no horizontal overflow. Leads and Follow-ups used readable cards. Linda's follow-up card showed contact links, stage, interest, value, agent, last contact and Flagged reason. Read-only details, edit form, create-form keyboard movement from first to last name, and delete confirmation were inspected. The viewport override was reset.
+- Access copy now says “reload or lock the workspace.” No speculative change was made to `state.loaded` on lock.
+- A real desktop screenshot is saved at `screenshots/v2-overview.jpg`; no mobile screenshot file was saved. Mobile screenshots were inspected in the browser tool.
+- Final `node --check` passed for `static/app.js` and `static/config.js`; `git diff --check` passed after the documentation/Pages changes. The full suite was not needlessly rerun for copy/documentation changes.
+- GitHub Pages was inspected: it publishes main's root. A redirect for that specific project address was added to send visitors to Render after merge. Live Pages redirect behavior still needs verification after publication.
+
+### Remaining verification and external block
+
+Public #41 was last read as Deployment Verification, Closed Won, Won, `123456.78`, email null; it remains pending deletion. Public health/readiness returned 200 and the database contained 41 leads at the last check. Do not interpret the canonical local count as public cleanup evidence.
+
+Automatic browser approval review rejected the attempted public credential submission because the account had reached its usage limit. No alternate route was used to bypass that rejection. Public cleanup, final public CRUD/mobile checks, exact new deployed SHA, logs, PR merge, and release remain incomplete. Private-mode lock/re-unlock data clearing and final analytics/pagination checks also remain to be completed.
+
+## September 12 — earlier foundation verification
 
 ## Executed successfully
 

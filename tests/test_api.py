@@ -16,7 +16,7 @@ def create(client, auth, lead, **changes):
 def test_health_ready_and_frontend(client):
     assert client.get("/health").json() == {"status": "ok"}
     assert client.get("/ready").status_code == 200
-    assert "Pipeline overview" in client.get("/").text
+    assert "<title>Pipeline CRM</title>" in client.get("/").text
     assert client.get("/static/app.js").status_code == 200
     assert client.get("/.env").status_code == 404
 

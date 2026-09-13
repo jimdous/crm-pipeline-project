@@ -1,5 +1,13 @@
 # Engineering decisions
 
+## Agent-oriented interface
+
+Overview opens on the follow-up queue; the full directory has its own destination. Analytics remain available in an expandable section. Contact links, due reasons, grouped forms, and mobile cards prioritize working with leads while retaining the existing API and vanilla JavaScript architecture.
+
+## Future workflow and property integration
+
+Contact history, tasks/next actions, and property associations are hypotheses to test with agents after V2. Any later live MLS integration must use an approved RESO/MLS provider and comply with licensing. V2 has no live MLS dependency, listing tables, or AI features.
+
 ## Python/FastAPI backend
 
 **Decision:** add FastAPI with Pydantic validation and Uvicorn. **Why:** connect the existing browser and SQL work through a real API. **Alternatives:** Express or Django. **Tradeoff:** a second language broadens experience but adds concepts and dependencies.
