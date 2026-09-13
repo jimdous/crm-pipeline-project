@@ -1,6 +1,8 @@
 # Deploy V2
 
-Deployment is prepared but not yet verified publicly. A Render account is now available; dashboard access and resource creation are pending.
+The [public demo](https://crm-pipeline-v2.onrender.com/) runs on Render with a PostgreSQL 17 database in Oregon. The Blueprint uses branch `codex/crm-v2`. See [verification evidence](VERIFICATION.md) for completed checks.
+
+The current deployment was connected using the public repository URL. Git provider repository permissions were not expanded. Deploy later commits with **Manual Deploy → Deploy latest commit**, and use the Blueprint's **Manual sync** for configuration changes. Do not rely on automatic deployment without checking the repository integration.
 
 ## Render blueprint
 
