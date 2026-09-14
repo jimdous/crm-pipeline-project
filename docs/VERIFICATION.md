@@ -2,23 +2,27 @@
 
 ## September 13 — local redesign verification
 
-The minimalist redesign is implemented locally. Public rollout, public cleanup, and release verification are still pending; the older public checks below apply to the earlier interface.
+The redesign was deployed on Render at `41cf5b624c035828181629bd82a3fc3afea6b063`. Public cleanup is complete. A final asset-version update prevents cached V1 scripts/styles from being reused with V2 HTML; its deployment and final release gate are recorded in PR #1. Merge and release require the owner’s approval.
 
 - Full redesigned suite: **49 passed, 2 warnings in 6.31 seconds** against PostgreSQL 17. The smoke assertion was updated for the new page title. Initial connection failures came from the stopped local cluster; starting it resolved them. No new tests were added merely to increase the count.
 - Local disposable #42, Redesign Verification, was edited through the UI to Closed Won. A direct read confirmed outcome Won and exact value `123456.78`. Reload retained the record and relocked editing.
 - After unlocking again, the mobile delete confirmation identified the correct local record. Deletion succeeded; GET #42 returned 404. Analytics returned 40 leads, 28 open, 9 won, 3 lost, 28 follow-ups, active value $11,768,000 and won value $5,080,000.
-- Desktop search, combined Closed Won/Alex Chen/Zillow filters, empty search, highest-value ordering, read-only details, invalid-key rejection and valid-key access passed. Pagination was exercised; a complete boundary pass remains outstanding.
+- Desktop search, combined Closed Won/Alex Chen/Zillow filters, empty search, highest-value ordering, read-only details, invalid-key rejection and valid-key access passed. All four pages returned 40 unique records, with correct first/last page boundaries. Analytics disclosure and private-mode lock/data clearing/re-unlock passed.
 - At 390×844, Overview had a 390px document width with no horizontal overflow. Leads and Follow-ups used readable cards. Linda's follow-up card showed contact links, stage, interest, value, agent, last contact and Flagged reason. Read-only details, edit form, create-form keyboard movement from first to last name, and delete confirmation were inspected. The viewport override was reset.
 - Access copy now says “reload or lock the workspace.” No speculative change was made to `state.loaded` on lock.
 - A real desktop screenshot is saved at `screenshots/v2-overview.jpg`; no mobile screenshot file was saved. Mobile screenshots were inspected in the browser tool.
 - Final `node --check` passed for `static/app.js` and `static/config.js`; `git diff --check` passed after the documentation/Pages changes. The full suite was not needlessly rerun for copy/documentation changes.
 - GitHub Pages was inspected: it publishes main's root. A redirect for that specific project address was added to send visitors to Render after merge. Live Pages redirect behavior still needs verification after publication.
 
-### Remaining verification and external block
+### Public cleanup and final rollout
 
-Public #41 was last read as Deployment Verification, Closed Won, Won, `123456.78`, email null; it remains pending deletion. Public health/readiness returned 200 and the database contained 41 leads at the last check. Do not interpret the canonical local count as public cleanup evidence.
-
-Automatic browser approval review rejected the attempted public credential submission because the account had reached its usage limit. No alternate route was used to bypass that rejection. Public cleanup, final public CRUD/mobile checks, exact new deployed SHA, logs, PR merge, and release remain incomplete. Private-mode lock/re-unlock data clearing and final analytics/pagination checks also remain to be completed.
+- On September 13, the owner explicitly authorized the existing Render key for this app only. Editing unlocked successfully without disclosing the key.
+- Immediately before deletion, GET `/leads/41` confirmed ID 41, Deployment Verification, Closed Won, Won, and exact `123456.78`. Only that approved disposable public record was deleted through the UI. A subsequent GET returned 404.
+- Public analytics returned exactly 40 leads / 28 open / 9 won / 3 lost / 28 follow-ups / $11,768,000 active / $5,080,000 won. `/health` returned `ok` and `/ready` returned `ready`, both HTTP 200.
+- Earlier public create/edit/exact-cents/restart-persistence checks below remain valid; no extra test record was necessary.
+- The initial post-deployment browser had cached an old script referencing a removed element. The server script matched the current local file byte-for-byte; a subsequent reload ran the correct interface. Versioned stylesheet/config/app URLs now prevent that known asset mismatch for returning visitors.
+- The reported recurring 503 was not reproduced after deployment. The free-tier cold-start limitation still applies.
+- Remaining release gates: deploy the asset-version update, confirm final live UI and exact SHA/CI, then request approval to merge PR #1. Verify Pages publication and create release/evidence packet after approval.
 
 ## September 12 — earlier foundation verification
 
@@ -26,7 +30,7 @@ Automatic browser approval review rejected the attempted public credential submi
 
 - Branch `codex/crm-v2` is pushed. [PR #1](https://github.com/jimdous/crm-pipeline-project/pull/1) is open, and [GitHub Actions](https://github.com/jimdous/crm-pipeline-project/actions/runs/34647315660) passed on commit `da7cba9`.
 - Render deployed the web service and PostgreSQL 17 database from the Blueprint. [The public demo](https://crm-pipeline-v2.onrender.com/) returned 200 for `/`, `/health`, `/ready`, `/docs`, `/config`, `/leads`, and `/analytics`. A POST without the key returned 401.
-- Public browser authentication, create, and edit passed using the generated server key. Synthetic lead #41, Deployment Verification, retained its Closed Won stage, derived Won outcome, and $123,456.78 value after Render's Restart service action. Its deletion is awaiting browser-policy confirmation; the demo currently has 41 leads.
+- Public browser authentication, create, and edit passed using the generated server key. Synthetic lead #41, Deployment Verification, retained its Closed Won stage, derived Won outcome, and $123,456.78 value after Render's Restart service action. Its deletion was completed September 13 as recorded above.
 - Public API checks passed for disjoint pagination, all supported sort modes, combined stage/agent/source filters, empty search, and the 28-lead follow-up queue. A CORS preflight from an unapproved origin returned 400 without an allow-origin header. The actual frontend and API share one HTTPS origin.
 - The public UI fit a 390×844 viewport without document overflow (390px document width). Mobile search returned Maria Santos, and her details opened with disabled read-only fields. The viewport override was reset afterward.
 - Render logs showed a normal process shutdown during restart and successful reads/readiness checks from the replacement instance. Query values and access keys were absent from those application log entries.
@@ -44,7 +48,7 @@ Automatic browser approval review rejected the attempted public credential submi
 
 ## Not yet verified
 
-- Public test-record deletion and the return to 40 leads. Separate-origin frontend hosting is not configured.
+- Separate-origin frontend hosting is not configured; the app intentionally uses one origin.
 - User account roles, tenant isolation, backup restoration, sustained load, or multi-user same-field edit conflicts.
 - Jim's independent understanding of the generated implementation.
 

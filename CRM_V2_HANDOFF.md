@@ -1,18 +1,18 @@
 # CRM Pipeline V2 — completion handoff
 
-Prepared September 13, 2026. This records completed work and the exact stopping point. **V2 is not yet fully finished: the new interface is local, uncommitted, and not deployed.**
+## Current release checkpoint — September 13, 2026
 
-## Latest continuation update — read before the historical snapshot below
+This section supersedes every historical stopping point below. Continue from the current branch; do not repeat completed QA or recreate the app.
 
-- Local #42 QA is now complete: edited through the browser to Closed Won, derived Won and exact $123,456.78 verified, reload persistence/relocking verified, then deleted through the mobile confirmation. GET returned 404 and local canonical metrics returned to 40 leads / 28 open / 9 won / 3 lost / 28 due / $11,768,000 active / $5,080,000 won. Do not recreate #42 or repeat this cleanup.
-- Mobile Overview, Leads/Follow-ups cards, search, read-only details, edit/create form and delete dialog were inspected at 390×844. Document width was 390px. Keyboard Tab moved first-name focus to last name. Viewport was reset.
-- Access copy was corrected to “reload or lock the workspace.” `state.loaded` was not changed speculatively.
-- Pages was inspected and publishes main's root. `static/config.js` now redirects the exact historical GitHub Pages project address to Render; no CORS architecture added. Verify after publication.
-- README now includes the desktop screenshot and product workflow; decisions include concise deferred workflow/MLS notes. Deployment and verification docs reflect the new findings.
-- JS syntax and whitespace checks passed after these changes. The substantive redesign's existing 49-test pass remains the current suite result.
-- Public authentication was blocked by automatic browser approval review citing the account usage limit. Public #41 has NOT been deleted, and the redesign has NOT been deployed. Do not bypass the rejection through another tool or route.
-- Remaining local checks include complete pagination boundaries, analytics disclosure, and private-mode data clearing/re-unlock. Public cleanup, final public checks, CI on new code, deployment, merge and release still remain.
-- The sections below preserve the earlier checkpoint; where they say #42 still exists or copy is unfixed, this update supersedes them. Use git status/log for any later commit/push state.
+- Branch `codex/crm-v2`; redesign commit `41cf5b624c035828181629bd82a3fc3afea6b063` was pushed, passed both CI runs, and deployed successfully on Render.
+- All 49 local tests passed. Desktop/mobile, private lock/unlock, all four pages/40 unique records, and analytics disclosure QA completed. Local disposable #42 was deleted and canonical local totals restored.
+- Public editing successfully unlocked under the owner’s explicit authorization. Immediately reverified public #41 as Deployment Verification / Closed Won / Won / $123,456.78, then deleted only that approved test record. Subsequent GET returned 404.
+- Public totals verified: 40 leads, 28 open, 9 won, 3 lost, 28 follow-ups, $11,768,000 active and $5,080,000 won. Health/readiness both 200. No extra test records created.
+- Public create/edit/exact-cents/restart persistence already passed. No recurring 503 reproduced. A stale browser script was observed after deployment; an asset-version fix is included in the current continuation.
+- Remaining: deploy that fix, confirm final live UI and exact SHA/green CI, update PR evidence, ask owner to merge. Do not merge until approval. After approval verify main/Render/data/Pages, create v2.0.0 release if clean, and deliver final completion/career evidence packet. No future features.
+- See `docs/VERIFICATION.md` and PR #1 for current evidence. The text below is an archival checkpoint, not current instructions or status.
+
+## Historical checkpoint (superseded)
 
 ## 1. Start here
 

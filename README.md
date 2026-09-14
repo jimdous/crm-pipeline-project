@@ -12,7 +12,7 @@ The demo uses synthetic data. Visitors can browse; editing requires a private ac
 
 ![Pipeline CRM desktop overview](screenshots/v2-overview.jpg)
 
-Screenshot: local V2 redesign. Public rollout status is recorded in [verification](docs/VERIFICATION.md).
+Screenshot: V2 Overview captured locally with the canonical synthetic dataset. The same redesign is deployed publicly; evidence is recorded in [verification](docs/VERIFICATION.md).
 
 The interface puts follow-ups first, with a searchable lead directory, contact links, grouped editing forms, and an expandable pipeline summary. Small screens use labeled lead cards.
 
