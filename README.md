@@ -1,191 +1,88 @@
-# Real Estate CRM Pipeline Dashboard
+# CRM Pipeline V2
 
-**Live Site:** https://jimdous.github.io/crm-pipeline-project/
-**Demo Video:** *(coming soon)*
+A real estate lead workspace built with vanilla JavaScript, FastAPI, and PostgreSQL.
 
-A full-stack CRM portfolio project demonstrating SaaS thinking, database design, SQL analytics, and business reporting — built to showcase Solutions Engineering and RevOps skills.
+Open the workspace to see which leads need attention, review their contact details and pipeline stage, and keep records current.
 
----
+[Public demo](https://crm-pipeline-v2.onrender.com/) · [API documentation](https://crm-pipeline-v2.onrender.com/docs) · [Verification](docs/VERIFICATION.md)
 
-## Project Overview
+The demo uses synthetic data. Visitors can browse; editing requires a private access key. Render's free service may take about a minute to wake. Its free database expires 30 days after creation, so the hosting plan must change before then to keep the demo available.
 
-This project simulates a real-world CRM pipeline system for a real estate agency. It tracks leads from first contact through closed deal, supports multiple agents, and provides SQL-powered business analytics across a normalized PostgreSQL database.
+## What it does
 
-A recruiter opening this repo will find: a live frontend, a production-style database, and demonstrated ability to ask and answer business questions with SQL.
+![Pipeline CRM desktop overview](screenshots/v2-overview.jpg)
 
-### Homepage
-![Website Homepage](screenshots/01_website_homepage.jpg)
+Screenshot: V2 Overview captured locally with the canonical synthetic dataset. The same redesign is deployed publicly; evidence is recorded in [verification](docs/VERIFICATION.md).
 
-### Dashboard
-![CRM Dashboard](screenshots/02_dashboard.jpg)
+The interface puts follow-ups first, with a searchable lead directory, contact links, grouped editing forms, and an expandable pipeline summary. Small screens use labeled lead cards.
 
----
+- Create, edit, and delete leads with persistent database storage.
+- Search names and emails; filter by stage, agent, or source; sort and paginate.
+- View SQL-backed pipeline totals, stage counts, agent results, and lead sources.
+- Follow up with open leads that are flagged, never contacted, or at least seven days stale.
+- Validate names, email, dates, stages, and positive monetary values, including cents.
+- Browse in read-only mode or unlock editing with a server-configured key.
 
-## Business Problem
+Analytics cover all leads; directory filters affect only the table. Close rate is won / (won + lost). Outcome follows stage automatically. Dates use UTC calendar days.
 
-Real estate agencies struggle to track lead quality, agent performance, and pipeline health across sources. This project models that problem — showing how a CRM database can answer questions like:
+## Architecture
 
-- Which lead source generates the most revenue?
-- Which agent has the highest close rate?
-- How much total pipeline value is active right now?
-- Which leads need follow-up today?
-
----
-
-## CRM Workflow
-
-```
-Lead Captured → Contacted → Qualified → Proposal → Negotiation → Closed Won / Lost
+```text
+Browser: index.html + static/
+             ↓ fetch / JSON
+FastAPI: validation + access checks
+             ↓ parameterized Psycopg queries
+PostgreSQL: leads + migration history
 ```
 
-Each lead is linked to a contact record, an optional deal, and a log of activities — matching how real SaaS CRMs like Salesforce and HubSpot are structured.
+FastAPI serves the frontend and API from one origin. There is no frontend build step or ORM. Numbered SQL migrations add constraints and indexes in a transaction. The CSV is a seed; PostgreSQL is authoritative after import.
 
----
+V1 combined PostgreSQL analysis with a static dashboard. Its original page is preserved in [the V1 archive](docs/v1-dashboard.html). V2 adds the API, persistent CRUD, validation, authorization, tests, CI, and deployment.
 
-## Technology Stack
+## Run locally
 
-| Layer | Tool |
-|---|---|
-| Frontend | HTML, CSS, JavaScript |
-| Hosting | GitHub Pages |
-| Database | PostgreSQL 17 |
-| DB GUI | pgAdmin 4 |
-| SQL | PostgreSQL SQL |
-| Version Control | Git / GitHub |
+Requires Python 3.12 and a running PostgreSQL 17 server with permission to create databases. From the repository root:
 
----
-
-## Database Design
-
-The database `crm_pipeline` contains 4 linked tables:
-
-```
-crm_pipeline
-├── leads         (30 rows) — core pipeline table
-├── contacts      (15 rows) — linked company/contact info
-├── deals         (15 rows) — deal records with probability and close date
-└── activities    (25 rows) — call logs, tours, offers, closings
+```sh
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-dev.txt
+cp .env.example .env
+createdb crm_pipeline
 ```
 
-### leads
-| Column | Type | Description |
-|---|---|---|
-| lead_id | SERIAL PK | Unique identifier |
-| customer_name | VARCHAR | Full name |
-| email | VARCHAR | Contact email |
-| phone | VARCHAR | Phone number |
-| lead_source | VARCHAR | Zillow, Referral, Google Ads, etc. |
-| stage | VARCHAR | Pipeline stage |
-| deal_value | DECIMAL | Estimated deal value |
-| follow_up_needed | BOOLEAN | Needs action today |
-| assigned_agent | VARCHAR | Jim Ferdous, Sarah Kim, Mike Patel, Emily Chen |
-| created_date | DATE | Lead creation date |
-| last_contact_date | DATE | Most recent contact |
-| property_interest | VARCHAR | Condo, Single Family, Luxury, Commercial |
-| lead_score | INTEGER | Engagement score 0–100 |
-| outcome | VARCHAR | Purchased, Lost, NULL |
-| city | VARCHAR | Bay Area city |
-| budget | DECIMAL | Buyer budget |
+Set `DATABASE_URL` in `.env` for your database. Generate `API_KEY` with `python -c 'import secrets; print(secrets.token_urlsafe(36))'` and save it in `.env`. This file is ignored by Git. Keep `PUBLIC_DEMO=false` for private reads, or use `true` for synthetic public demos.
 
-### contacts
-Linked to leads via `lead_id`. Stores company name, preferred contact method, and notes.
-
-### deals
-Linked to leads via `lead_id`. Stores deal name, close probability %, and expected close date.
-
-### activities
-Linked to contacts via `contact_id`. Logs calls, tours, proposals, and closings with dates and notes.
-
-![pgAdmin Database View](screenshots/03_pgadmin_database.jpg)
-
----
-
-## Entity Relationship Diagram
-
-```
-leads (PK: lead_id)
-  ├── contacts (FK: lead_id)
-  │     └── activities (FK: contact_id)
-  └── deals (FK: lead_id)
+```sh
+python -m backend.init_db --seed
+python -m uvicorn backend.main:app --reload --no-access-log
 ```
 
-![CRM Entity Relationship Diagram](docs/crm_erd.png)
+Open [localhost:8000](http://127.0.0.1:8000/), then unlock with your key. Opening `index.html` directly cannot connect to the backend. The key stays in browser memory and is cleared on reload.
 
----
+Initialization applies unapplied files in `backend/migrations`. `--seed` imports only into an empty table; `--seed-on-create` imports only when first creating the table. Existing invalid records must be corrected before the integrity migration succeeds. **The historical `crm_setup.sql` drops leads; never run it on data you want to preserve.**
 
-## SQL Analysis
+## Tests
 
-All queries are in [`/sql/sql_queries.sql`](sql/sql_queries.sql).
+Use a separate test database. Each integration test creates and removes its own schema; the suite never falls back to the application's database.
 
-| # | Business Question | Key Result |
-|---|---|---|
-| 1 | Total pipeline value? | **$21,495,000** |
-| 2 | Which sources generate the most leads? | Zillow, Referral, Website |
-| 3 | Which source drives the most deal value? | Zillow ($4.31M) |
-| 4 | Which leads need follow-up today? | 17 of 30 flagged |
-| 5 | Pipeline value by agent? | Jim Ferdous leads at $7.29M |
-| 6 | Lead distribution by funnel stage? | New Lead (8) and Contacted (7) largest |
-| 7 | Top 10 deals by value? | Range $1.1M–$1.2M |
-| 8 | Win/loss rate by agent? | Jim Ferdous 75% win rate |
-| 9 | Avg lead score by property type? | Luxury (82.5) leads all types |
-| 10 | Weighted deal value from open deals? | Cross-table JOIN with deals table |
-
-![Leads Table Query Result](screenshots/04_leads_table.jpg)
-
-**Sample result — Pipeline Value by Agent:**
-```
-Jim Ferdous    8 leads    $7,295,000    avg $912K
-Sarah Kim      8 leads    $5,600,000    avg $700K
-Mike Patel     7 leads    $5,060,000    avg $723K
-Emily Chen     7 leads    $3,540,000    avg $506K
+```sh
+createdb crm_pipeline_test
+TEST_DATABASE_URL=postgresql://localhost/crm_pipeline_test python -m pytest -q
 ```
 
-![Pipeline Value Query](screenshots/05_pipeline_value.jpg)
+49 tests passed locally and from a clean clone. GitHub Actions runs PostgreSQL 17 integration tests and a JavaScript syntax check. Coverage includes CRUD, validation, authorization, search/filter/sort/pagination, analytics, follow-up boundaries, migrations, seed idempotency, and database failures.
 
-![Agent Performance Query](screenshots/07_agent_performance.jpg)
+## Deployment
 
-**Total pipeline: $21,495,000 across 30 leads**
+[Render setup and operations](docs/DEPLOYMENT.md) describe the `render.yaml` Blueprint: one Python web service and a PostgreSQL database. Render generates the access key and supplies the private database connection. The start command applies migrations and seeds only on first creation.
 
----
+See [verification evidence](docs/VERIFICATION.md) for the current deployment checks, and [engineering decisions](docs/DECISIONS.md) for tradeoffs.
 
-## Business Insights
+## Data and limitations
 
-### Pipeline Value
-Total pipeline value: **$21,495,000** across 30 active leads.
+The canonical CSV contains 40 synthetic leads, $17,673,000 in modeled property value, 9 won and 3 lost leads. Values are not earned revenue or real transactions. Historical V1 snapshots differ from this CSV.
 
-### Lead Sources
-Zillow generated the highest pipeline value at $4.31M, followed by Facebook ($3.89M) and Referral ($3.67M). Zillow, Referral, and Website also produced the highest lead volume.
+This is a single-workspace portfolio app. A shared key provides no user identity, roles, or tenant isolation. Deletes are permanent; same-field concurrent edits use last-writer-wins. Database connections open per request. Before real team use, add identity-based authorization, audit history, backups with restoration checks, and concurrency/load testing. No AI or predictive scoring is used.
 
-### Pipeline Stages
-Most leads sit at the top of the funnel — **New Lead** (8) and **Contacted** (7) — highlighting an opportunity to speed up qualification and follow-up.
-
-### Agent Performance
-**Jim Ferdous** manages the largest pipeline at $7.29M across 8 leads, with a 75% win rate — the highest of any agent on the team.
-
----
-
-## Business Questions Answered
-
-- **Which source drives most revenue?** Zillow ($4.31M), Facebook ($3.89M), Referral ($3.67M)
-- **Top agent by pipeline?** Jim Ferdous at $7.29M across 8 leads
-- **Active pipeline value?** $21.5M total across 7 lead sources
-- **Leads needing follow-up?** 17 of 30 leads flagged for immediate action
-- **Highest close rate?** Jim Ferdous at 75% win rate
-
----
-
-## Future Improvements
-
-- Connect live PostgreSQL data to the frontend dashboard
-- Build Power BI / Tableau reports on top of the database
-- Add predictive lead scoring using Python
-- Expand to multi-region pipeline tracking
-- Automate weekly pipeline reports via SQL + email
-
----
-
-## Author
-
-**Jim Ferdous** — Aspiring Solutions Engineer / RevOps Analyst
-GitHub: [@jimdous](https://github.com/jimdous)
-Live Project: https://jimdous.github.io/crm-pipeline-project/
+Future hypotheses are contact history, tasks/next actions, and property associations, subject to agent feedback. Live MLS integration is deferred and would require approved provider access and licensing. None of these features is implemented in V2.
