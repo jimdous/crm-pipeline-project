@@ -2,7 +2,7 @@
 
 ## September 13 — local redesign verification
 
-The redesign was deployed on Render at `41cf5b624c035828181629bd82a3fc3afea6b063`. Public cleanup is complete. A final asset-version update prevents cached V1 scripts/styles from being reused with V2 HTML; its deployment and final release gate are recorded in PR #1. Merge and release require the owner’s approval.
+The redesign was deployed on Render at `41cf5b624c035828181629bd82a3fc3afea6b063`. Public cleanup is complete. A final asset-version update prevents cached V1 scripts/styles from being reused with V2 HTML; its deployment and final release gate are recorded in PR #1. The owner approved merging PR #1, which merged as `125b4276ebd54b5169a0e295b5b8f8cf9aee3bce`. See [completion report](COMPLETION_REPORT.md) for the final release record.
 
 - Full redesigned suite: **49 passed, 2 warnings in 6.31 seconds** against PostgreSQL 17. The smoke assertion was updated for the new page title. Initial connection failures came from the stopped local cluster; starting it resolved them. No new tests were added merely to increase the count.
 - Local disposable #42, Redesign Verification, was edited through the UI to Closed Won. A direct read confirmed outcome Won and exact value `123456.78`. Reload retained the record and relocked editing.
@@ -22,7 +22,8 @@ The redesign was deployed on Render at `41cf5b624c035828181629bd82a3fc3afea6b063
 - Earlier public create/edit/exact-cents/restart-persistence checks below remain valid; no extra test record was necessary.
 - The initial post-deployment browser had cached an old script referencing a removed element. The server script matched the current local file byte-for-byte; a subsequent reload ran the correct interface. Versioned stylesheet/config/app URLs now prevent that known asset mismatch for returning visitors.
 - The reported recurring 503 was not reproduced after deployment. The free-tier cold-start limitation still applies.
-- Remaining release gates: deploy the asset-version update, confirm final live UI and exact SHA/CI, then request approval to merge PR #1. Verify Pages publication and create release/evidence packet after approval.
+- Asset-version commit `1f9032ccaee976c0a554f5eb32e5806368809f24` deployed successfully. Both final branch CI runs passed. After owner credential rotation, deployment `dep-dajk3gjm8hqs738jm9rg` remained live at that SHA; authentication/relock, health/readiness and canonical totals passed without displaying the new key.
+- PR #1 merged with owner approval. Its tree matched the deployed application. Post-merge endpoints returned 200, #41 remained 404, canonical totals remained intact, and the Pages redirect configuration was publicly served. Release documentation changes do not change executable code.
 
 ## September 12 — earlier foundation verification
 

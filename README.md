@@ -8,6 +8,8 @@ Open the workspace to see which leads need attention, review their contact detai
 
 The demo uses synthetic data. Visitors can browse; editing requires a private access key. Render's free service may take about a minute to wake. Its free database expires 30 days after creation, so the hosting plan must change before then to keep the demo available.
 
+[V2 completion report and career evidence](docs/COMPLETION_REPORT.md) · [v2.0.0 release](https://github.com/jimdous/crm-pipeline-project/releases/tag/v2.0.0)
+
 ## What it does
 
 ![Pipeline CRM desktop overview](screenshots/v2-overview.jpg)
